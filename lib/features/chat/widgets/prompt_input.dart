@@ -1,10 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class PromptInput extends StatelessWidget {
+import '../controllers/chat_controller.dart';
+
+class PromptInput extends StatefulWidget {
   const PromptInput({super.key});
 
   @override
+  State<PromptInput> createState() => _PromptInputState();
+}
+
+class _PromptInputState extends State<PromptInput> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _sendMessage() {
+    final text = _controller.text.trim();
+
+    if (text.isEmpty) {
+      return;
+    }
+
+    context.read<ChatController>().sendUserMessage(text);
+
+    _controller.clear();
+
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final hasText = _controller.text.trim().isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -12,7 +44,6 @@ class PromptInput extends StatelessWidget {
         border: Border(
           top: BorderSide(
             color: Colors.grey.shade800,
-            width: 1,
           ),
         ),
       ),
@@ -20,12 +51,12 @@ class PromptInput extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              enabled: false,
+              controller: _controller,
+              minLines: 1,
+              maxLines: 6,
+              onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
-                hintText: 'Type your message...',
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                ),
+                hintText: "Ask Era anything...",
                 filled: true,
                 fillColor: const Color(0xFF2A2A2A),
                 border: OutlineInputBorder(
@@ -37,6 +68,7 @@ class PromptInput extends StatelessWidget {
                   vertical: 14,
                 ),
               ),
+              onSubmitted: (_) => _sendMessage(),
             ),
           ),
 
@@ -44,10 +76,9 @@ class PromptInput extends StatelessWidget {
 
           SizedBox(
             height: 50,
-            child: ElevatedButton.icon(
-              onPressed: null,
-              icon: const Icon(Icons.send),
-              label: const Text("Send"),
+            child: ElevatedButton(
+              onPressed: hasText ? _sendMessage : null,
+              child: const Icon(Icons.send),
             ),
           ),
         ],
