@@ -26,7 +26,7 @@ class _PromptInputState extends State<PromptInput> {
       return;
     }
 
-    context.read<ChatController>().sendUserMessage(text);
+  context.read<ChatController>().sendMessage(text);
 
     _controller.clear();
 

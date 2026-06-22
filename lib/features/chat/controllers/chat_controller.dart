@@ -91,7 +91,7 @@ class ChatController extends ChangeNotifier {
       _appendMessage(
         Message(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
-          text: response.message,
+         text: response.text,
           isUser: false,
           createdAt: DateTime.now(),
         ),
