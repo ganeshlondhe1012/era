@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../core/ai/providers/ollam_provider.dart';
 import '../features/chat/controllers/chat_controller.dart';
 import '../features/chat/screens/home_screen.dart';
+import '../features/chat/services/ollama_service.dart';
 
 class EraApp extends StatelessWidget {
   const EraApp({super.key});
@@ -10,7 +12,18 @@ class EraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ChatController(),
+      create: (_) {
+        final ollamaService = OllamaService();
+
+        final provider = OllamaProvider(
+          service: ollamaService,
+          model: 'phi3:mini',
+        );
+
+        return ChatController(
+          provider: provider,
+        );
+      },
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Era',

@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/ai/providers/ai_provider.dart';
+import '../models/ai_response.dart';
 import '../models/chat.dart';
 import '../models/message.dart';
+import '../services/chat_service.dart';
 
 class ChatController extends ChangeNotifier {
-  ChatController() {
-    _createInitialChat();
-  }
+  ChatController({
+    required AIProvider provider,
+  }) : _chatService = ChatService(provider: provider);
 
-  final List<Chat> _chats = [];
+  final ChatService _chatService;
+
+  final List<Chat> _chats = [
+    Chat(
+      id: '1',
+      title: 'New Chat',
+      createdAt: DateTime.now(),
+      messages: const [],
+    ),
+  ];
 
   int _currentChatIndex = 0;
+
+  bool _isGenerating = false;
 
   List<Chat> get chats => List.unmodifiable(_chats);
 
@@ -20,24 +34,27 @@ class ChatController extends ChangeNotifier {
 
   List<Message> get messages => currentChat.messages;
 
-  bool get hasMessages => currentChat.messages.isNotEmpty;
+  bool get hasMessages => messages.isNotEmpty;
 
-  void _createInitialChat() {
-    _chats.add(
-      Chat(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "New Chat",
-        createdAt: DateTime.now(),
-        messages: const [],
-      ),
-    );
+  bool get isGenerating => _isGenerating;
+
+  Future<bool> isAiAvailable() {
+    return _chatService.isReady();
+  }
+
+  void switchChat(int index) {
+    if (index == _currentChatIndex) return;
+    if (index < 0 || index >= _chats.length) return;
+
+    _currentChatIndex = index;
+    notifyListeners();
   }
 
   void createNewChat() {
     _chats.add(
       Chat(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        title: "New Chat",
+        title: 'New Chat',
         createdAt: DateTime.now(),
         messages: const [],
       ),
@@ -48,57 +65,74 @@ class ChatController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void switchChat(int index) {
-    if (index < 0 || index >= _chats.length) {
-      return;
+  Future<void> sendMessage(String text) async {
+    if (_isGenerating) return;
+
+    final prompt = text.trim();
+
+    if (prompt.isEmpty) return;
+
+    _appendMessage(
+      Message(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        text: prompt,
+        isUser: true,
+        createdAt: DateTime.now(),
+      ),
+    );
+
+    _isGenerating = true;
+    notifyListeners();
+
+    try {
+      final AIResponse response =
+          await _chatService.sendPrompt(prompt);
+
+      _appendMessage(
+        Message(
+          id: DateTime.now().microsecondsSinceEpoch.toString(),
+          text: response.message,
+          isUser: false,
+          createdAt: DateTime.now(),
+        ),
+      );
+    } catch (e) {
+      _appendMessage(
+        Message(
+          id: DateTime.now().microsecondsSinceEpoch.toString(),
+          text: 'Error: $e',
+          isUser: false,
+          createdAt: DateTime.now(),
+        ),
+      );
+    } finally {
+      _isGenerating = false;
+      notifyListeners();
     }
-
-    _currentChatIndex = index;
-
-    notifyListeners();
-  }
-
-  void sendUserMessage(String text) {
-    final message = Message(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      text: text.trim(),
-      isUser: true,
-      createdAt: DateTime.now(),
-    );
-
-    final updatedMessages = List<Message>.from(currentChat.messages)
-      ..add(message);
-
-    _chats[_currentChatIndex] = currentChat.copyWith(
-      messages: updatedMessages,
-    );
-
-    notifyListeners();
-  }
-
-  void addAssistantMessage(String text) {
-    final message = Message(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      text: text.trim(),
-      isUser: false,
-      createdAt: DateTime.now(),
-    );
-
-    final updatedMessages = List<Message>.from(currentChat.messages)
-      ..add(message);
-
-    _chats[_currentChatIndex] = currentChat.copyWith(
-      messages: updatedMessages,
-    );
-
-    notifyListeners();
   }
 
   void clearCurrentChat() {
-    _chats[_currentChatIndex] = currentChat.copyWith(
-      messages: const [],
+    _replaceCurrentChat(
+      currentChat.copyWith(
+        messages: const [],
+      ),
     );
 
     notifyListeners();
+  }
+
+  void _appendMessage(Message message) {
+    final updatedMessages = List<Message>.from(currentChat.messages)
+      ..add(message);
+
+    _replaceCurrentChat(
+      currentChat.copyWith(
+        messages: updatedMessages,
+      ),
+    );
+  }
+
+  void _replaceCurrentChat(Chat chat) {
+    _chats[_currentChatIndex] = chat;
   }
 }
