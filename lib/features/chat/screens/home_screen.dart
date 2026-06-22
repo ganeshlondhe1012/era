@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/chat_area.dart';
+import '../widgets/prompt_input.dart';
+import '../widgets/sidebar.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: SafeArea(
+        child: Row(
           children: [
-            Icon(
-              Icons.smart_toy_rounded,
-              size: 72,
-            ),
-            SizedBox(height: 24),
-            Text(
-              'Era',
-              style: TextStyle(
-                fontSize: 34,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Offline AI Assistant',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+            // Left Sidebar
+            const Sidebar(),
+
+            // Right Content
+            Expanded(
+              child: Column(
+                children: const [
+                  ChatArea(),
+                  PromptInput(),
+                ],
               ),
             ),
           ],
