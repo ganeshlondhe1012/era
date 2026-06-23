@@ -28,6 +28,8 @@ class ChatController extends ChangeNotifier {
       messages: const [],
     ),
   ];
+
+
   
   List<String> _availableModels = [];
 
@@ -46,6 +48,19 @@ bool get hasModels => _availableModels.isNotEmpty;
 
   List<Chat> get chats => List.unmodifiable(_chats);
 
+  List<Chat> get filteredChats {
+  if (_searchQuery.trim().isEmpty) {
+    return List.unmodifiable(_chats);
+  }
+
+  final query = _searchQuery.toLowerCase();
+
+  return _chats.where((chat) {
+    return chat.title.toLowerCase().contains(query);
+  }).toList();
+}
+
+
   int get currentChatIndex => _currentChatIndex;
 
   Chat get currentChat => _chats[_currentChatIndex];
@@ -55,6 +70,10 @@ bool get hasModels => _availableModels.isNotEmpty;
   bool get hasMessages => messages.isNotEmpty;
 
   bool get isGenerating => _isGenerating;
+
+  String _searchQuery = '';
+
+  String get searchQuery => _searchQuery;
 
   Future<bool> isAiAvailable() {
     return _chatService.isReady();
@@ -210,6 +229,47 @@ void selectModel(String model) {
 
      notifyListeners();
   }
+
+  //search chats by title
+  void searchChats(String query) {
+  _searchQuery = query;
+  notifyListeners();
+}
+
+  Future<void> renameCurrentChat(String title) async {
+  final newTitle = title.trim();
+
+  if (newTitle.isEmpty) {
+    return;
+  }
+
+  _replaceCurrentChat(
+    currentChat.copyWith(
+      title: newTitle,
+    ),
+  );
+
+  await _saveChats();
+
+  notifyListeners();
+}
+
+  Future<void> deleteCurrentChat() async {
+  if (_chats.length == 1) {
+    clearCurrentChat();
+    return;
+  }
+
+  _chats.removeAt(_currentChatIndex);
+
+  if (_currentChatIndex >= _chats.length) {
+    _currentChatIndex = _chats.length - 1;
+  }
+
+  await _saveChats();
+
+  notifyListeners();
+}
 
   void _appendMessage(Message message) {
     final updatedMessages = List<Message>.from(currentChat.messages)
