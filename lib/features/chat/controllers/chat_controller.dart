@@ -138,26 +138,37 @@ void selectModel(String model) {
     _isGenerating = true;
     notifyListeners();
 
-    try {
-      if (_selectedModel == null) {
-  throw Exception(
-    'No Ollama model selected.',
-  );
-}
+  try {
+  if (_selectedModel == null) {
+    throw Exception(
+      'No Ollama model selected.',
+    );
+  }
 
-final response = await _chatService.sendPrompt(
-  prompt: prompt,
-  model: _selectedModel!,
-);
-      _appendMessage(
-        Message(
-          id: DateTime.now().microsecondsSinceEpoch.toString(),
-         text: response.text,
-          isUser: false,
-          createdAt: DateTime.now(),
-        ),
-      );
-    } catch (e) {
+  final assistantMessage = Message(
+    id: DateTime.now().microsecondsSinceEpoch.toString(),
+    text: '',
+    isUser: false,
+    createdAt: DateTime.now(),
+  );
+
+  _appendMessage(assistantMessage);
+
+  var buffer = '';
+
+  await for (final chunk in _chatService.streamPrompt(
+    prompt: prompt,
+    model: _selectedModel!,
+  )) {
+    if (chunk.isDone) {
+      break;
+    }
+
+    buffer += chunk.text;
+
+    _updateLastMessage(buffer);
+    }
+  } catch (e) {
       _appendMessage(
         Message(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -192,6 +203,28 @@ final response = await _chatService.sendPrompt(
       ),
     );
   }
+
+  void _updateLastMessage(String text) {
+  if (currentChat.messages.isEmpty) {
+    return;
+  }
+
+  final updatedMessages = List<Message>.from(currentChat.messages);
+
+  final last = updatedMessages.last;
+
+  updatedMessages[updatedMessages.length - 1] = last.copyWith(
+    text: text,
+  );
+
+  _replaceCurrentChat(
+    currentChat.copyWith(
+      messages: updatedMessages,
+    ),
+  );
+
+  notifyListeners();
+}
 
   void _replaceCurrentChat(Chat chat) {
     _chats[_currentChatIndex] = chat;

@@ -1,22 +1,18 @@
 import '../../../features/chat/models/ai_response.dart';
+import '../../../features/chat/models/ai_response_chunk.dart';
 import '../../../features/chat/services/ollama_service.dart';
+
 import 'ai_provider.dart';
 
 class OllamaProvider implements AIProvider {
   OllamaProvider({
     required OllamaService service,
-   
   }) : _service = service;
 
   final OllamaService _service;
 
-
-
   @override
   String get providerName => 'Ollama';
-
-  @override
- 
 
   @override
   Future<bool> isAvailable() {
@@ -24,33 +20,54 @@ class OllamaProvider implements AIProvider {
   }
 
   @override
-Future<AIResponse> generateResponse({
-  required String prompt,
-  required String model,
-}) async {
-  final stopwatch = Stopwatch()..start();
+  Future<List<String>> getInstalledModels() {
+    return _service.getInstalledModels();
+  }
 
-  final text = await _service.generateResponse(
-    prompt: prompt,
-    model: model,
-  );
+  @override
+  Future<AIResponse> generateResponse({
+    required String prompt,
+    required String model,
+  }) async {
+    final stopwatch = Stopwatch()..start();
 
-  stopwatch.stop();
+    final text = await _service.generateResponse(
+      prompt: prompt,
+      model: model,
+    );
 
-  return AIResponse(
-    text: text,
-    model: model,
-    completed: true,
-    generationTime: stopwatch.elapsed,
-    promptTokens: null,
-    completionTokens: null,
-  );
-}
+    stopwatch.stop();
 
-@override
-Future<List<String>> getInstalledModels() {
-  return _service.getInstalledModels();
-}
+    return AIResponse(
+      text: text,
+      model: model,
+      completed: true,
+      generationTime: stopwatch.elapsed,
+      promptTokens: null,
+      completionTokens: null,
+    );
+  }
+
+  @override
+  Stream<AIResponseChunk> generateResponseStream({
+    required String prompt,
+    required String model,
+  }) async* {
+    await for (final chunk in _service.generateResponseStream(
+      prompt: prompt,
+      model: model,
+    )) {
+      yield AIResponseChunk(
+        text: chunk,
+        isDone: false,
+      );
+    }
+
+    yield const AIResponseChunk(
+      text: '',
+      isDone: true,
+    );
+  }
 
   @override
   Future<void> dispose() async {

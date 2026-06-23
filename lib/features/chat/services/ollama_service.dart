@@ -85,6 +85,71 @@ class OllamaService {
     return content.trim();
   }
 
+    /// Streams a response from Ollama incrementally.
+  Stream<String> generateResponseStream({
+    required String prompt,
+    required String model,
+  }) async* {
+    final request = http.Request(
+      'POST',
+      _chatUri,
+    );
+
+    request.headers['Content-Type'] = 'application/json';
+
+    request.body = jsonEncode({
+      'model': model,
+      'stream': true,
+      'messages': [
+        {
+          'role': 'user',
+          'content': prompt,
+        }
+      ],
+    });
+
+    final response = await _client
+        .send(request)
+        .timeout(requestTimeout);
+
+    if (response.statusCode != 200) {
+      final errorBody =
+          await response.stream.bytesToString();
+
+      throw Exception(
+        'Ollama returned HTTP ${response.statusCode}\n$errorBody',
+      );
+    }
+
+    await for (final line in response.stream
+        .transform(utf8.decoder)
+        .transform(const LineSplitter())) {
+      if (line.trim().isEmpty) {
+        continue;
+      }
+
+      final dynamic json = jsonDecode(line);
+
+      if (json is! Map<String, dynamic>) {
+        continue;
+      }
+
+      final message = json['message'];
+
+      if (message is Map<String, dynamic>) {
+        final content = message['content'];
+
+        if (content is String && content.isNotEmpty) {
+          yield content;
+        }
+      }
+
+      if (json['done'] == true) {
+        break;
+      }
+    }
+  }
+
   /// Returns installed local models.
   Future<List<String>> getInstalledModels() async {
     final response = await _client

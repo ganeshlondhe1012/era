@@ -1,6 +1,7 @@
 import '../../../features/chat/models/ai_response.dart';
+import '../../../features/chat/models/ai_response_chunk.dart';
 
-/// Base abstraction for all AI backends.
+/// Base abstraction for every AI backend.
 ///
 /// Current:
 /// - Ollama
@@ -10,29 +11,45 @@ import '../../../features/chat/models/ai_response.dart';
 /// - llama.cpp
 /// - OpenAI
 /// - Gemini
+/// - Claude
 abstract class AIProvider {
-  /// Provider display name.
+  /// Display name.
   String get providerName;
 
   /// Returns true if the provider is available.
   Future<bool> isAvailable();
 
   /// Returns every installed model.
-  ///
-  /// Example:
-  /// [
-  ///   "deepseek-coder:6.7b",
-  ///   "phi3:mini",
-  ///   "llama3:8b"
-  /// ]
   Future<List<String>> getInstalledModels();
 
-  /// Generates a response using the specified model.
+  /// Generates a complete response.
+  ///
+  /// This API is kept for backward compatibility.
   Future<AIResponse> generateResponse({
     required String prompt,
     required String model,
   });
 
-  /// Releases any resources held by the provider.
+  /// Streams a response incrementally.
+  ///
+  /// Default implementation falls back to the non-streaming API
+  /// so providers continue to work until they implement native
+  /// streaming support.
+  Stream<AIResponseChunk> generateResponseStream({
+    required String prompt,
+    required String model,
+  }) async* {
+    final response = await generateResponse(
+      prompt: prompt,
+      model: model,
+    );
+
+    yield AIResponseChunk(
+      text: response.text,
+      isDone: true,
+    );
+  }
+
+  /// Releases resources.
   Future<void> dispose() async {}
 }
