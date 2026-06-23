@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+ 
   provider: ^6.1.5
   http: ^1.5.0
   sqflite_common_ffi: ^2.3.6

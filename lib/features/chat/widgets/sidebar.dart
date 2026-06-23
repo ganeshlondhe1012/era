@@ -1,73 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../settings/screens/settings_screen.dart';
 import '../controllers/chat_controller.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
 
+  static const double _width = 260;
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<ChatController>(
-      builder: (context, controller, child) {
-        return Container(
-          width: 260,
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
-            border: Border(
-              right: BorderSide(
-                color: Colors.grey.shade800,
-              ),
-            ),
+    return Container(
+      width: _width,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+          right: BorderSide(
+            color: Theme.of(context).dividerColor,
           ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 45,
-                  child: ElevatedButton.icon(
-                    onPressed: controller.createNewChat,
-                    icon: const Icon(Icons.add),
-                    label: const Text("New Chat"),
+        ),
+      ),
+      child: SafeArea(
+        child: Consumer<ChatController>(
+          builder: (context, controller, _) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: controller.createNewChat,
+                      icon: const Icon(Icons.add),
+                      label: const Text('New Chat'),
+                    ),
                   ),
                 ),
-              ),
 
-              const Divider(height: 1),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: controller.chats.length,
+                    itemBuilder: (context, index) {
+                      final chat = controller.chats[index];
 
-              Expanded(
-                child: ListView.builder(
-                  itemCount: controller.chats.length,
-                  itemBuilder: (context, index) {
-                    final chat = controller.chats[index];
+                      return ListTile(
+                        leading: const Icon(Icons.chat_bubble_outline),
+                        title: Text(
+                          chat.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        selected:
+                            controller.currentChatIndex == index,
+                        onTap: () {
+                          controller.switchChat(index);
+                        },
+                      );
+                    },
+                  ),
+                ),
 
-                    final selected =
-                        index == controller.currentChatIndex;
+                const Divider(height: 1),
 
-                    return ListTile(
-                      leading: const Icon(Icons.chat_bubble_outline),
-
-                      title: Text(
-                        chat.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                ListTile(
+                  leading: const Icon(Icons.settings_outlined),
+                  title: const Text('Settings'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const SettingsScreen(),
                       ),
-
-                      selected: selected,
-
-                      onTap: () {
-                        controller.switchChat(index);
-                      },
                     );
                   },
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

@@ -2,42 +2,76 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../core/ai/providers/ollam_provider.dart';
+import '../core/theme/app_theme.dart';
+
 import '../features/chat/controllers/chat_controller.dart';
 import '../features/chat/screens/home_screen.dart';
 import '../features/chat/services/ollama_service.dart';
+
+import '../features/settings/controllers/settings_controller.dart';
+import '../features/settings/models/app_settings.dart';
 
 class EraApp extends StatelessWidget {
   const EraApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) {
-        final ollamaService = OllamaService();
-
-        final provider = OllamaProvider(
-          service: ollamaService,
-          model: 'phi3:mini',
-        );
-
-        return ChatController(
-          provider: provider,
-        );
-      },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Era',
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.dark,
-          ),
-          scaffoldBackgroundColor: const Color(0xFF121212),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsController>(
+          create: (_) {
+            final controller = SettingsController();
+            controller.initialize();
+            return controller;
+          },
         ),
-        home: const HomeScreen(),
+        ChangeNotifierProvider<ChatController>(
+          create: (_) {
+            final ollamaService = OllamaService();
+
+            final provider = OllamaProvider(
+              service: ollamaService,
+            );
+
+            return ChatController(
+              provider: provider,
+            );
+          },
+        ),
+      ],
+      child: Consumer<SettingsController>(
+        builder: (context, settings, _) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Era',
+
+            theme: AppTheme.light(),
+
+            darkTheme: AppTheme.dark(),
+
+            themeMode: _toFlutterThemeMode(
+              settings.themeMode,
+            ),
+
+            home: const HomeScreen(),
+          );
+        },
       ),
     );
+  }
+
+  ThemeMode _toFlutterThemeMode(
+    AppThemeMode mode,
+  ) {
+    switch (mode) {
+      case AppThemeMode.system:
+        return ThemeMode.system;
+
+      case AppThemeMode.light:
+        return ThemeMode.light;
+
+      default:
+        return ThemeMode.dark;
+    }
   }
 }

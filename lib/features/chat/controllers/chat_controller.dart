@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/ai/providers/ai_provider.dart';
-import '../models/ai_response.dart';
+
 import '../models/chat.dart';
 import '../models/message.dart';
 import '../services/chat_service.dart';
 
 class ChatController extends ChangeNotifier {
-  ChatController({
-    required AIProvider provider,
-  }) : _chatService = ChatService(provider: provider);
+ ChatController({
+  required AIProvider provider,
+}) : _chatService = ChatService(provider: provider) {
+  initialize();
+}
 
   final ChatService _chatService;
 
@@ -21,6 +23,17 @@ class ChatController extends ChangeNotifier {
       messages: const [],
     ),
   ];
+  
+  List<String> _availableModels = [];
+
+String? _selectedModel;
+
+List<String> get availableModels =>
+    List.unmodifiable(_availableModels);
+
+String? get selectedModel => _selectedModel;
+
+bool get hasModels => _availableModels.isNotEmpty;
 
   int _currentChatIndex = 0;
 
@@ -41,6 +54,20 @@ class ChatController extends ChangeNotifier {
   Future<bool> isAiAvailable() {
     return _chatService.isReady();
   }
+
+Future<void> initialize() async {
+  _availableModels = [];
+  _selectedModel = null;
+
+  final connected = await _chatService.isReady();
+
+  if (!connected) {
+    notifyListeners();
+    return;
+  }
+
+  await refreshModels();
+}
 
   void switchChat(int index) {
     if (index == _currentChatIndex) return;
@@ -65,6 +92,33 @@ class ChatController extends ChangeNotifier {
     notifyListeners();
   }
 
+
+Future<void> refreshModels() async {
+  try {
+    final models = await _chatService.getInstalledModels();
+
+    _availableModels = models;
+
+    if (_availableModels.isNotEmpty) {
+      _selectedModel ??= _availableModels.first;
+    }
+  } catch (_) {
+    _availableModels = [];
+    _selectedModel = null;
+  }
+
+  notifyListeners();
+}
+
+void selectModel(String model) {
+  if (_selectedModel == model) return;
+
+  _selectedModel = model;
+
+  notifyListeners();
+}
+
+
   Future<void> sendMessage(String text) async {
     if (_isGenerating) return;
 
@@ -85,9 +139,16 @@ class ChatController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final AIResponse response =
-          await _chatService.sendPrompt(prompt);
+      if (_selectedModel == null) {
+  throw Exception(
+    'No Ollama model selected.',
+  );
+}
 
+final response = await _chatService.sendPrompt(
+  prompt: prompt,
+  model: _selectedModel!,
+);
       _appendMessage(
         Message(
           id: DateTime.now().microsecondsSinceEpoch.toString(),

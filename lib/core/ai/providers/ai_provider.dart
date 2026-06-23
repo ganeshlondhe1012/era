@@ -1,44 +1,38 @@
 import '../../../features/chat/models/ai_response.dart';
 
-/// Base contract implemented by every AI backend.
+/// Base abstraction for all AI backends.
 ///
-/// Examples:
+/// Current:
 /// - Ollama
+///
+/// Future:
 /// - LM Studio
 /// - llama.cpp
 /// - OpenAI
 /// - Gemini
-///
-/// The rest of the application must never know which
-/// implementation is being used.
 abstract class AIProvider {
-  /// Display name shown in the UI.
+  /// Provider display name.
   String get providerName;
 
-  /// Active model name.
-  String get modelName;
-
-  /// Returns whether the provider is currently available.
-  ///
-  /// Example:
-  /// - Ollama server running
-  /// - LM Studio started
+  /// Returns true if the provider is available.
   Future<bool> isAvailable();
 
-  /// Generates a complete response.
+  /// Returns every installed model.
   ///
-  /// Returning an [AIResponse] keeps the controller independent
-  /// from any specific AI backend.
+  /// Example:
+  /// [
+  ///   "deepseek-coder:6.7b",
+  ///   "phi3:mini",
+  ///   "llama3:8b"
+  /// ]
+  Future<List<String>> getInstalledModels();
+
+  /// Generates a response using the specified model.
   Future<AIResponse> generateResponse({
     required String prompt,
+    required String model,
   });
 
-  /// Optional cleanup hook.
-  ///
-  /// Future providers may use:
-  /// - HTTP clients
-  /// - Streams
-  /// - WebSockets
-  /// - Native resources
+  /// Releases any resources held by the provider.
   Future<void> dispose() async {}
 }

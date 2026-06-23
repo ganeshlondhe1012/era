@@ -28,18 +28,26 @@ class ChatService {
     return _provider.isAvailable();
   }
 
+Future<List<String>> getInstalledModels() {
+  return _provider.getInstalledModels();
+}
+
   /// Sends a prompt to the configured AI provider.
   ///
   /// Returns the provider's complete response model.
-  Future<AIResponse> sendPrompt(String prompt) async {
-    final cleanedPrompt = prompt.trim();
+ Future<AIResponse> sendPrompt({
+  required String prompt,
+  required String model,
+}) async {
+  final cleanedPrompt = prompt.trim();
 
-    if (cleanedPrompt.isEmpty) {
-      throw Exception('Prompt cannot be empty.');
-    }
-
-    return _provider.generateResponse(
-      prompt: cleanedPrompt,
-    );
+  if (cleanedPrompt.isEmpty) {
+    throw Exception('Prompt cannot be empty.');
   }
+
+  return _provider.generateResponse(
+    prompt: cleanedPrompt,
+    model: model,
+  );
+}
 }

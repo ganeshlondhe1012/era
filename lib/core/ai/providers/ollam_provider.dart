@@ -5,18 +5,18 @@ import 'ai_provider.dart';
 class OllamaProvider implements AIProvider {
   OllamaProvider({
     required OllamaService service,
-    this.model = 'phi3:mini',
+   
   }) : _service = service;
 
   final OllamaService _service;
 
-  final String model;
+
 
   @override
   String get providerName => 'Ollama';
 
   @override
-  String get modelName => model;
+ 
 
   @override
   Future<bool> isAvailable() {
@@ -24,27 +24,33 @@ class OllamaProvider implements AIProvider {
   }
 
   @override
-  Future<AIResponse> generateResponse({
-    required String prompt,
-  }) async {
-    final stopwatch = Stopwatch()..start();
+Future<AIResponse> generateResponse({
+  required String prompt,
+  required String model,
+}) async {
+  final stopwatch = Stopwatch()..start();
 
-    final text = await _service.generateResponse(
-      prompt: prompt,
-      model: model,
-    );
+  final text = await _service.generateResponse(
+    prompt: prompt,
+    model: model,
+  );
 
-    stopwatch.stop();
+  stopwatch.stop();
 
-    return AIResponse(
-      text: text,
-      model: model,
-      completed: true,
-      generationTime: stopwatch.elapsed,
-      promptTokens: null,
-      completionTokens: null,
-    );
-  }
+  return AIResponse(
+    text: text,
+    model: model,
+    completed: true,
+    generationTime: stopwatch.elapsed,
+    promptTokens: null,
+    completionTokens: null,
+  );
+}
+
+@override
+Future<List<String>> getInstalledModels() {
+  return _service.getInstalledModels();
+}
 
   @override
   Future<void> dispose() async {
