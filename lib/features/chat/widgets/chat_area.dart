@@ -4,20 +4,51 @@ import 'package:provider/provider.dart';
 import '../controllers/chat_controller.dart';
 import 'message_bubble.dart';
 
-class ChatArea extends StatelessWidget {
+class ChatArea extends StatefulWidget {
   const ChatArea({super.key});
+
+  @override
+  State<ChatArea> createState() => _ChatAreaState();
+}
+
+class _ChatAreaState extends State<ChatArea> {
+  final ScrollController _scrollController =
+      ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController.hasClients) {
+        return;
+      }
+
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Consumer<ChatController>(
         builder: (context, controller, child) {
+          _scrollToBottom();
+
           if (!controller.hasMessages) {
             return Container(
               color: const Color(0xFF121212),
               child: const Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.smart_toy_outlined,
@@ -56,6 +87,7 @@ class ChatArea extends StatelessWidget {
           return Container(
             color: const Color(0xFF121212),
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.symmetric(
                 vertical: 20,
               ),
