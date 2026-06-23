@@ -1,9 +1,11 @@
+import '../../memory/models/memory.dart';
+
 class PromptBuilder {
   const PromptBuilder();
 
   String build({
     required String userPrompt,
-    Map<String, String> memories = const {},
+    List<Memory> memories = const [],
     String? systemPrompt,
   }) {
     final buffer = StringBuffer();
@@ -19,9 +21,13 @@ class PromptBuilder {
         'Relevant user memory:',
       );
 
-      memories.forEach((key, value) {
-        buffer.writeln('- $key: $value');
-      });
+      buffer.writeln();
+
+      for (final memory in memories) {
+        buffer.writeln(
+          '- ${memory.key}: ${memory.value}',
+        );
+      }
 
       buffer.writeln();
     }

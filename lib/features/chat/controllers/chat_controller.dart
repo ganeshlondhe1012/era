@@ -11,14 +11,37 @@ import '../repository/sqlite_chat_repository.dart';
 import '../models/generation_state.dart';
 import '../services/generation_controller.dart';
 
+import '../../memory/services/memory_extractor.dart';
+import '../../memory/services/memory_service.dart';
+import '../../memory/repository/local_repository.dart';
+
+import '../services/chat_pipeline.dart';
+import '../services/prompt_builder.dart';
+
 class ChatController extends ChangeNotifier {
- ChatController({
+ChatController({
   required AIProvider provider,
-}) : _chatService = ChatService(provider: provider) {
+}) : _chatService = ChatService(
+        provider: provider,
+      ) {
+  _memoryService = MemoryService(
+    repository: LocalMemoryRepository(),
+  );
+
+  _chatPipeline = ChatPipeline(
+    chatService: _chatService,
+    memoryExtractor: const MemoryExtractor(),
+    memoryService: _memoryService,
+    promptBuilder: const PromptBuilder(),
+  );
+
   initialize();
 }
 
   final ChatService _chatService;
+  late final MemoryService _memoryService;
+
+late final ChatPipeline _chatPipeline;
 
   final GenerationController _generationController =
     GenerationController();
@@ -120,6 +143,8 @@ Future<void> initialize() async {
     // Ignore persistence errors for now.
   }
 
+  await _memoryService.initialize();
+
   final connected = await _chatService.isReady();
 
   if (!connected) {
@@ -189,6 +214,12 @@ void selectModel(String model) {
 
     final prompt = text.trim();
 
+    final finalPrompt =
+    await _chatPipeline.buildPrompt(
+      userPrompt: prompt,
+      history: currentChat.messages,
+    );
+
     if (prompt.isEmpty) return;
 
     _generateChatTitle(prompt);
@@ -226,7 +257,7 @@ void selectModel(String model) {
   var buffer = '';
 
   await for (final chunk in _chatService.streamPrompt(
-    prompt: prompt,
+    prompt: finalPrompt,
     model: _selectedModel!,
   )) {
     if (_generationController.isCancelled) {

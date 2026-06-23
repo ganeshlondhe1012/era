@@ -1,48 +1,59 @@
-import '../models/chat_request.dart';
-import '../models/chat_response.dart';
+import '../../memory/models/memory.dart';
+import '../../memory/services/memory_extractor.dart';
+import '../../memory/services/memory_service.dart';
+
+import '../models/message.dart';
+
 import 'chat_service.dart';
+import 'conversation_context_builder.dart';
 import 'prompt_builder.dart';
 
 class ChatPipeline {
   ChatPipeline({
     required ChatService chatService,
-    PromptBuilder? promptBuilder,
+    required MemoryExtractor memoryExtractor,
+    required MemoryService memoryService,
+    required PromptBuilder promptBuilder,
+    ConversationContextBuilder? contextBuilder,
   })  : _chatService = chatService,
-        _promptBuilder = promptBuilder ?? const PromptBuilder();
+        _memoryExtractor = memoryExtractor,
+        _memoryService = memoryService,
+        _promptBuilder = promptBuilder,
+        _contextBuilder =
+            contextBuilder ??
+                const ConversationContextBuilder();
 
   final ChatService _chatService;
+  final MemoryExtractor _memoryExtractor;
+  final MemoryService _memoryService;
   final PromptBuilder _promptBuilder;
+  final ConversationContextBuilder _contextBuilder;
 
-  Future<ChatResponse> send({
-    required ChatRequest request,
-    Map<String, String> memories = const {},
-    String? systemPrompt,
+  Future<String> buildPrompt({
+    required String userPrompt,
+    required List<Message> history,
   }) async {
-    final prompt = _promptBuilder.build(
-      userPrompt: request.prompt,
+    final extracted =
+        _memoryExtractor.extract(userPrompt);
+
+    if (extracted.isNotEmpty) {
+      await _memoryService.addMemories(extracted);
+    }
+
+    final List<Memory> memories =
+        _memoryService.memories;
+
+    final contextualPrompt =
+        _contextBuilder.build(
+      messages: history,
+      prompt: userPrompt,
+    );
+
+    return _promptBuilder.build(
+      userPrompt: contextualPrompt,
       memories: memories,
-      systemPrompt: systemPrompt,
-    );
-
-    final response = await _chatService.sendPrompt(
-      prompt: prompt,
-      model: request.model,
-    );
-
-    return ChatResponse(
-      text: response.text,
-      completed: response.completed,
-      generationTime: response.generationTime,
-      tokens: response.completionTokens,
     );
   }
 
-  Stream<String> stream({
-    required ChatRequest request,
-  }) {
-    return _chatService.streamPrompt(
-      prompt: request.prompt,
-      model: request.model,
-    ).where((chunk) => !chunk.isDone).map((chunk) => chunk.text);
-  }
+  ChatService get chatService => _chatService;
 }
