@@ -1,17 +1,16 @@
 import '../models/memory.dart';
-import '../repository/memory_repository.dart';
+import '../repository/local_repository.dart';
 
 class MemoryService {
   MemoryService({
-    required MemoryRepository repository,
+    required LocalMemoryRepository repository,
   }) : _repository = repository;
 
-  final MemoryRepository _repository;
+  final LocalMemoryRepository _repository;
 
   final List<Memory> _memories = [];
 
-  List<Memory> get memories =>
-      List.unmodifiable(_memories);
+  List<Memory> get memories => List.unmodifiable(_memories);
 
   Future<void> initialize() async {
     _memories
@@ -24,38 +23,48 @@ class MemoryService {
     required String value,
   }) async {
     final existingIndex = _memories.indexWhere(
-      (memory) => memory.key == key,
+      (m) => m.key == key,
     );
 
-    if (existingIndex != -1) {
-      _memories[existingIndex] =
-          _memories[existingIndex].copyWith(
-        value: value,
-        updatedAt: DateTime.now(),
-      );
+    final memory = Memory(
+  id: DateTime.now()
+      .microsecondsSinceEpoch
+      .toString(),
+  key: key,
+  value: value,
+  createdAt: DateTime.now(),
+  updatedAt: DateTime.now(),
+);
+
+    if (existingIndex == -1) {
+      _memories.add(memory);
     } else {
-      _memories.add(
-        Memory(
-          id: DateTime.now()
-              .microsecondsSinceEpoch
-              .toString(),
-          key: key,
-          value: value,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-      );
+      _memories[existingIndex] = memory;
     }
 
     await _repository.save(_memories);
   }
 
-  Future<void> removeMemory(
-    String key,
+  Future<void> addMemories(
+    Iterable<Memory> memories,
   ) async {
-    _memories.removeWhere(
-      (memory) => memory.key == key,
-    );
+    for (final memory in memories) {
+      final existingIndex = _memories.indexWhere(
+        (m) => m.key == memory.key,
+      );
+
+      if (existingIndex == -1) {
+        _memories.add(memory);
+      } else {
+        _memories[existingIndex] = memory;
+      }
+    }
+
+    await _repository.save(_memories);
+  }
+
+  Future<void> removeMemory(String key) async {
+    _memories.removeWhere((m) => m.key == key);
 
     await _repository.save(_memories);
   }
@@ -63,33 +72,25 @@ class MemoryService {
   Future<void> clear() async {
     _memories.clear();
 
-    await _repository.clear();
+    await _repository.save(_memories);
   }
 
-  Memory? findMemory(
-    String key,
-  ) {
+  Memory? findMemory(String key) {
     try {
       return _memories.firstWhere(
-        (memory) => memory.key == key,
+        (m) => m.key == key,
       );
     } catch (_) {
       return null;
     }
   }
 
-  List<Memory> search(
-    String query,
-  ) {
-    final search = query.toLowerCase();
+  List<Memory> search(String query) {
+    final q = query.toLowerCase();
 
     return _memories.where((memory) {
-      return memory.key
-              .toLowerCase()
-              .contains(search) ||
-          memory.value
-              .toLowerCase()
-              .contains(search);
+      return memory.key.toLowerCase().contains(q) ||
+          memory.value.toLowerCase().contains(q);
     }).toList();
   }
 }
