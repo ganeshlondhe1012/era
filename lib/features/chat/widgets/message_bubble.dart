@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/message.dart';
-
-import 'message_actions.dart';
-
 import 'markdown_message.dart';
+import 'message_actions.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -53,44 +51,36 @@ class MessageBubble extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                                isUser
-                    ? SelectableText(
-                        message.text,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          height: 1.6,
-                        ),
-                      )
-                    : MarkdownMessage(
-                        text: message.text,
-                      ),
+                  MarkdownMessage(
+                    text: message.text,
+                  ),
 
                   const SizedBox(height: 8),
 
                   Align(
-                  alignment: Alignment.bottomRight,
-                  child: Text(
-                    _formatTime(message.createdAt),
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(.55),
-                      fontSize: 11,
+                    alignment: Alignment.bottomRight,
+                    child: Text(
+                      _formatTime(message.createdAt),
+                      style: TextStyle(
+                        color: Colors.white.withValues(
+                          alpha: 0.55,
+                        ),
+                        fontSize: 11,
+                      ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 4),
-
-                if (!isUser)
-                  MessageActions(
-                    text: message.text,
-                    onRegenerate: () {
-                      // TODO: Implement regenerate later.
-                    },
-                  ),
+                  if (!isUser) ...[
+                    const SizedBox(height: 8),
+                    MessageActions(
+                      text: message.text,
+                      onRegenerate: () {
+                        // TODO: Implement regenerate.
+                      },
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -117,8 +107,4 @@ class MessageBubble extends StatelessWidget {
 
     return '$hour:$minute';
   }
-
-  
-
-  
 }

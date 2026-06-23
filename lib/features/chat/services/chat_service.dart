@@ -2,6 +2,8 @@ import '../../../core/ai/providers/ai_provider.dart';
 
 import '../models/ai_response.dart';
 import '../models/ai_response_chunk.dart';
+import '../models/chat_request.dart';
+import '../models/chat_response.dart';
 
 /// Handles chat-related business logic.
 ///
@@ -31,7 +33,7 @@ class ChatService {
     return _provider.getInstalledModels();
   }
 
-  /// Sends a prompt and waits for the complete response.
+  /// Existing API (kept for backward compatibility)
   Future<AIResponse> sendPrompt({
     required String prompt,
     required String model,
@@ -48,7 +50,24 @@ class ChatService {
     );
   }
 
-  /// Streams a response incrementally.
+  /// New pipeline API
+  Future<ChatResponse> send(
+    ChatRequest request,
+  ) async {
+    final response = await sendPrompt(
+      prompt: request.prompt,
+      model: request.model,
+    );
+
+    return ChatResponse(
+      text: response.text,
+      completed: response.completed,
+      generationTime: response.generationTime,
+      tokens: response.completionTokens,
+    );
+  }
+
+  /// Existing streaming API
   Stream<AIResponseChunk> streamPrompt({
     required String prompt,
     required String model,
@@ -64,6 +83,16 @@ class ChatService {
     return _provider.generateResponseStream(
       prompt: cleanedPrompt,
       model: model,
+    );
+  }
+
+  /// New pipeline streaming API
+  Stream<AIResponseChunk> stream(
+    ChatRequest request,
+  ) {
+    return streamPrompt(
+      prompt: request.prompt,
+      model: request.model,
     );
   }
 }

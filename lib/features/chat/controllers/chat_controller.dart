@@ -8,6 +8,7 @@ import '../services/chat_service.dart';
 
 import '../repository/chat_repository.dart';
 import '../repository/sqlite_chat_repository.dart';
+import '../models/generation_state.dart';
 
 class ChatController extends ChangeNotifier {
  ChatController({
@@ -44,7 +45,8 @@ bool get hasModels => _availableModels.isNotEmpty;
 
   int _currentChatIndex = 0;
 
-  bool _isGenerating = false;
+ GenerationState _generationState =
+    GenerationState.idle;
 
   List<Chat> get chats => List.unmodifiable(_chats);
 
@@ -69,7 +71,11 @@ bool get hasModels => _availableModels.isNotEmpty;
 
   bool get hasMessages => messages.isNotEmpty;
 
-  bool get isGenerating => _isGenerating;
+  GenerationState get generationState =>
+    _generationState;
+
+  bool get isGenerating =>
+    _generationState.isGenerating;
 
   String _searchQuery = '';
 
@@ -91,6 +97,22 @@ Future<void> initialize() async {
   _availableModels = [];
   _selectedModel = null;
 
+  try {
+    final savedChats = await _repository.loadChats();
+
+    if (savedChats.isNotEmpty) {
+      _chats
+        ..clear()
+        ..addAll(savedChats);
+
+      if (_currentChatIndex >= _chats.length) {
+        _currentChatIndex = 0;
+      }
+    }
+  } catch (_) {
+    // Ignore persistence errors for now.
+  }
+
   final connected = await _chatService.isReady();
 
   if (!connected) {
@@ -99,6 +121,8 @@ Future<void> initialize() async {
   }
 
   await refreshModels();
+
+  notifyListeners();
 }
 
   void switchChat(int index) {
@@ -154,7 +178,7 @@ void selectModel(String model) {
 
 
   Future<void> sendMessage(String text) async {
-    if (_isGenerating) return;
+    if (_generationState.isGenerating) return;
 
     final prompt = text.trim();
 
@@ -169,7 +193,7 @@ void selectModel(String model) {
       ),
     );
 
-    _isGenerating = true;
+    _generationState = GenerationState.generating;
     notifyListeners();
 
   try {
@@ -202,7 +226,8 @@ void selectModel(String model) {
 
     _updateLastMessage(buffer);
     }
-  } catch (e) {
+ } catch (e) {
+  _generationState = GenerationState.error;
       _appendMessage(
         Message(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -211,21 +236,29 @@ void selectModel(String model) {
           createdAt: DateTime.now(),
         ),
       );
-    } finally {
-      _isGenerating = false;
-      await _saveChats();
-      notifyListeners();
-    }
+   } finally {
+        if (_generationState !=
+            GenerationState.error) {
+          _generationState =
+              GenerationState.completed;
+        }
+
+        await _saveChats();
+
+        notifyListeners();
+
+        _generationState = GenerationState.idle;
+      }
   }
 
-  void clearCurrentChat() {
+ Future<void> clearCurrentChat() async {
     _replaceCurrentChat(
       currentChat.copyWith(
         messages: const [],
       ),
     );
 
-    _saveChats();
+   await _saveChats();
 
      notifyListeners();
   }
@@ -256,7 +289,7 @@ void selectModel(String model) {
 
   Future<void> deleteCurrentChat() async {
   if (_chats.length == 1) {
-    clearCurrentChat();
+    await clearCurrentChat();
     return;
   }
 

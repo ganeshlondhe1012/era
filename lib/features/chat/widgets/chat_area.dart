@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/chat_controller.dart';
+import '../controllers/chat_scroll_controller.dart';
 import 'message_bubble.dart';
 
 class ChatArea extends StatefulWidget {
@@ -12,27 +13,13 @@ class ChatArea extends StatefulWidget {
 }
 
 class _ChatAreaState extends State<ChatArea> {
-  final ScrollController _scrollController =
-      ScrollController();
+  final ChatScrollController _scroll =
+      ChatScrollController();
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scroll.dispose();
     super.dispose();
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController.hasClients) {
-        return;
-      }
-
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOut,
-      );
-    });
   }
 
   @override
@@ -40,7 +27,9 @@ class _ChatAreaState extends State<ChatArea> {
     return Expanded(
       child: Consumer<ChatController>(
         builder: (context, controller, child) {
-          _scrollToBottom();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _scroll.scrollToBottom();
+          });
 
           if (!controller.hasMessages) {
             return Container(
@@ -87,14 +76,18 @@ class _ChatAreaState extends State<ChatArea> {
           return Container(
             color: const Color(0xFF121212),
             child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(
+              controller:
+                  _scroll.scrollController,
+              padding:
+                  const EdgeInsets.symmetric(
                 vertical: 20,
               ),
-              itemCount: controller.messages.length,
+              itemCount:
+                  controller.messages.length,
               itemBuilder: (context, index) {
                 return MessageBubble(
-                  message: controller.messages[index],
+                  message:
+                      controller.messages[index],
                 );
               },
             ),
