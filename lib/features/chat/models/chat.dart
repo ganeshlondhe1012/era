@@ -34,6 +34,35 @@ class Chat {
 
   int get messageCount => messages.length;
 
+  /// Serialize chat for persistence.
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'createdAt': createdAt.toIso8601String(),
+      'messages': messages
+          .map((message) => message.toMap())
+          .toList(),
+    };
+  }
+
+  /// Deserialize chat from persistence.
+  factory Chat.fromMap(
+    Map<String, dynamic> map,
+  ) {
+    return Chat(
+      id: map['id'] as String,
+      title: map['title'] as String,
+      createdAt: DateTime.parse(
+        map['createdAt'] as String,
+      ),
+      messages: (map['messages'] as List<dynamic>)
+          .cast<Map<String, dynamic>>()
+          .map(Message.fromMap)
+          .toList(),
+    );
+  }
+
   @override
   String toString() {
     return 'Chat(id: $id, title: $title, messages: ${messages.length})';

@@ -6,6 +6,9 @@ import '../models/chat.dart';
 import '../models/message.dart';
 import '../services/chat_service.dart';
 
+import '../repository/chat_repository.dart';
+import '../repository/sqlite_chat_repository.dart';
+
 class ChatController extends ChangeNotifier {
  ChatController({
   required AIProvider provider,
@@ -14,6 +17,8 @@ class ChatController extends ChangeNotifier {
 }
 
   final ChatService _chatService;
+
+  final ChatRepository _repository = SqliteChatRepository();
 
   final List<Chat> _chats = [
     Chat(
@@ -55,6 +60,14 @@ bool get hasModels => _availableModels.isNotEmpty;
     return _chatService.isReady();
   }
 
+Future<void> _saveChats() async {
+  try {
+    await _repository.saveChats(_chats);
+  } catch (_) {
+    // Ignore persistence errors for now.
+  }
+}
+
 Future<void> initialize() async {
   _availableModels = [];
   _selectedModel = null;
@@ -77,7 +90,7 @@ Future<void> initialize() async {
     notifyListeners();
   }
 
-  void createNewChat() {
+ Future<void> createNewChat() async {
     _chats.add(
       Chat(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -87,7 +100,9 @@ Future<void> initialize() async {
       ),
     );
 
-    _currentChatIndex = _chats.length - 1;
+   _currentChatIndex = _chats.length - 1;
+
+    await _saveChats();
 
     notifyListeners();
   }
@@ -179,6 +194,7 @@ void selectModel(String model) {
       );
     } finally {
       _isGenerating = false;
+      await _saveChats();
       notifyListeners();
     }
   }
@@ -190,7 +206,9 @@ void selectModel(String model) {
       ),
     );
 
-    notifyListeners();
+    _saveChats();
+
+     notifyListeners();
   }
 
   void _appendMessage(Message message) {
