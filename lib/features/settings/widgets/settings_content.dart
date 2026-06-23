@@ -5,6 +5,8 @@ import '../controllers/settings_controller.dart';
 import '../models/app_settings.dart';
 import '../models/settings_category.dart';
 
+import '../../ai/widgets/ai_settings_panel.dart';
+
 class SettingsContent extends StatelessWidget {
   const SettingsContent({
     super.key,
@@ -19,12 +21,8 @@ class SettingsContent extends StatelessWidget {
       case SettingsCategory.appearance:
         return const _AppearanceSettings();
 
-      case SettingsCategory.ai:
-        return const _ComingSoon(
-          title: 'AI Settings',
-          description:
-              'Configure AI providers, models, temperature, streaming and inference settings.',
-        );
+     case SettingsCategory.ai:
+  return const AISettingsPanel();
 
       case SettingsCategory.chat:
         return const _ComingSoon(
