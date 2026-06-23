@@ -11,7 +11,8 @@ class PromptInput extends StatefulWidget {
 }
 
 class _PromptInputState extends State<PromptInput> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -26,7 +27,7 @@ class _PromptInputState extends State<PromptInput> {
       return;
     }
 
-  context.read<ChatController>().sendMessage(text);
+    context.read<ChatController>().sendMessage(text);
 
     _controller.clear();
 
@@ -35,54 +36,89 @@ class _PromptInputState extends State<PromptInput> {
 
   @override
   Widget build(BuildContext context) {
-    final hasText = _controller.text.trim().isNotEmpty;
+    return Consumer<ChatController>(
+      builder: (context, controller, child) {
+        final hasText =
+            _controller.text.trim().isNotEmpty;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade800,
+        final isGenerating =
+            controller.isGenerating;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            border: Border(
+              top: BorderSide(
+                color: Colors.grey.shade800,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              minLines: 1,
-              maxLines: 6,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                hintText: "Ask Era anything...",
-                filled: true,
-                fillColor: const Color(0xFF2A2A2A),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  enabled: !isGenerating,
+                  minLines: 1,
+                  maxLines: 6,
+                  onChanged: (_) => setState(() {}),
+                  decoration: InputDecoration(
+                    hintText: isGenerating
+                        ? 'Era is generating...'
+                        : 'Ask Era anything...',
+                    filled: true,
+                    fillColor:
+                        const Color(0xFF2A2A2A),
+                    border: OutlineInputBorder(
+                      borderRadius:
+                          BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
+                  ),
+                  onSubmitted: (_) {
+                    if (!isGenerating) {
+                      _sendMessage();
+                    }
+                  },
                 ),
               ),
-              onSubmitted: (_) => _sendMessage(),
-            ),
-          ),
 
-          const SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-          SizedBox(
-            height: 50,
-            child: ElevatedButton(
-              onPressed: hasText ? _sendMessage : null,
-              child: const Icon(Icons.send),
-            ),
+              SizedBox(
+                height: 50,
+                child: isGenerating
+                    ? ElevatedButton(
+                        style:
+                            ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Colors.red,
+                        ),
+                        onPressed: () {
+                          controller.stopGeneration();
+                        },
+                        child: const Icon(
+                          Icons.stop,
+                        ),
+                      )
+                    : ElevatedButton(
+                        onPressed:
+                            hasText ? _sendMessage : null,
+                        child: const Icon(
+                          Icons.send,
+                        ),
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

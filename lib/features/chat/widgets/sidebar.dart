@@ -8,6 +8,7 @@ import 'chat_search_bar.dart';
 import 'chat_tile.dart';
 import 'delete_chat_dialog.dart';
 import 'rename_chat_dialog.dart';
+import '../services/chat_export_service.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
@@ -130,19 +131,37 @@ class Sidebar extends StatelessWidget {
 
                             case ChatMenuAction.pin:
                             case ChatMenuAction.duplicate:
-                            case ChatMenuAction.export:
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      '$action coming soon',
-                                    ),
-                                  ),
-                                );
-                              }
-                              break;
+                           case ChatMenuAction.export:
+                                try {
+                                  controller.switchChat(actualIndex);
+
+                                  final exporter = const ChatExportService();
+
+                                  final file = await exporter.exportMarkdown(
+                                    controller.currentChat,
+                                  );
+
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Exported to:\n${file.path}',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Export failed: $e',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                                break;
                           }
                         },
                       );

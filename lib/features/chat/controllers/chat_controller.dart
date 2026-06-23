@@ -9,6 +9,7 @@ import '../services/chat_service.dart';
 import '../repository/chat_repository.dart';
 import '../repository/sqlite_chat_repository.dart';
 import '../models/generation_state.dart';
+import '../services/generation_controller.dart';
 
 class ChatController extends ChangeNotifier {
  ChatController({
@@ -18,6 +19,9 @@ class ChatController extends ChangeNotifier {
 }
 
   final ChatService _chatService;
+
+  final GenerationController _generationController =
+    GenerationController();
 
   final ChatRepository _repository = SqliteChatRepository();
 
@@ -49,6 +53,9 @@ bool get hasModels => _availableModels.isNotEmpty;
     GenerationState.idle;
 
   List<Chat> get chats => List.unmodifiable(_chats);
+
+  GenerationController get generationController =>
+    _generationController;
 
   List<Chat> get filteredChats {
   if (_searchQuery.trim().isEmpty) {
@@ -184,6 +191,8 @@ void selectModel(String model) {
 
     if (prompt.isEmpty) return;
 
+    _generateChatTitle(prompt);
+
     _appendMessage(
       Message(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -192,6 +201,8 @@ void selectModel(String model) {
         createdAt: DateTime.now(),
       ),
     );
+    
+    _generationController.reset();
 
     _generationState = GenerationState.generating;
     notifyListeners();
@@ -218,6 +229,11 @@ void selectModel(String model) {
     prompt: prompt,
     model: _selectedModel!,
   )) {
+    if (_generationController.isCancelled) {
+  _generationState = GenerationState.cancelled;
+  break;
+}
+
     if (chunk.isDone) {
       break;
     }
@@ -263,6 +279,16 @@ void selectModel(String model) {
      notifyListeners();
   }
 
+  //stop generation if it's in progress
+  void stopGeneration() {
+  if (!_generationState.isGenerating) {
+    return;
+  }
+
+  _generationController.cancel();
+
+  notifyListeners();
+}
   //search chats by title
   void searchChats(String query) {
   _searchQuery = query;
@@ -285,6 +311,37 @@ void selectModel(String model) {
   await _saveChats();
 
   notifyListeners();
+}
+
+ void _generateChatTitle(String firstPrompt) {
+  if (currentChat.title != 'New Chat') {
+    return;
+  }
+
+  final cleaned = firstPrompt.trim();
+
+  if (cleaned.isEmpty) {
+    return;
+  }
+
+  String title = cleaned;
+
+  // Remove line breaks.
+  title = title.replaceAll('\n', ' ');
+
+  // Collapse multiple spaces.
+  title = title.replaceAll(RegExp(r'\s+'), ' ');
+
+  // Limit title length.
+  if (title.length > 40) {
+    title = '${title.substring(0, 40).trim()}...';
+  }
+
+  _replaceCurrentChat(
+    currentChat.copyWith(
+      title: title,
+    ),
+  );
 }
 
   Future<void> deleteCurrentChat() async {
