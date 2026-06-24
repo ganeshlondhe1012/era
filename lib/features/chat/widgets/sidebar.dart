@@ -13,7 +13,7 @@ import '../services/chat_export_service.dart';
 class Sidebar extends StatelessWidget {
   const Sidebar({super.key});
 
-  static const double _width = 260;
+  static const double _width = 280;
 
   @override
   Widget build(BuildContext context) {
@@ -33,25 +33,70 @@ class Sidebar extends StatelessWidget {
             return Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(16),
+               padding: const EdgeInsets.fromLTRB(
+                          16,
+                          20,
+                          16,
+                          12,
+                        ),
                   child: SizedBox(
                     width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () async {
-                        await controller.createNewChat();
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('New Chat'),
-                    ),
+                   child:FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                              minimumSize:
+                                  const Size.fromHeight(48),
+                              shape:
+                                  RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.circular(
+                                              14),
+                                  ),
+                          ),
+                      )
                   ),
                 ),
+                
+                const Divider(height: 1),
 
-                ChatSearchBar(
-                  onChanged: controller.searchChats,
+                  Padding(
+                    padding:
+                        const EdgeInsets.all(12),
+                    child: ListTile(
+                      shape:
+                          RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(12),
+                      ),
+                      leading:
+                          const Icon(Icons.settings_outlined),
+                      trailing:
+                          const Icon(Icons.chevron_right),
+                      title:
+                          const Text("Settings"),
+                      onTap: ...
+                    ),
+                  ),
+
+                Padding(
+            padding:
+                const EdgeInsets.fromLTRB(
+                    16,
+                    0,
+                    16,
+                    12,
                 ),
+            child:ChatSearchBar(
+                  onChanged: controller.searchChats,
+                ),),
 
                 Expanded(
-                  child: ListView.builder(
+                 
+                      child: ListView.builder(
+                        padding:
+                            const EdgeInsets.only(
+                                top: 8,
+                                bottom: 12,
+                            ),
                     itemCount: controller.filteredChats.length,
                     itemBuilder: (context, index) {
                       final chat = controller.filteredChats[index];
@@ -167,7 +212,8 @@ class Sidebar extends StatelessWidget {
                       );
                     },
                   ),
-                ),
+                  ),
+                
 
                 const Divider(height: 1),
 

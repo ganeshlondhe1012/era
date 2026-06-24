@@ -57,10 +57,10 @@ class OllamaProvider implements AIProvider {
       prompt: prompt,
       model: model,
     )) {
-      yield AIResponseChunk(
-        text: chunk,
-        isDone: false,
-      );
+            yield AIResponseChunk(
+          text: chunk,
+          isDone: false,
+        );
     }
 
     yield const AIResponseChunk(

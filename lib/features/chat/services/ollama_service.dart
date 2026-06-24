@@ -58,12 +58,14 @@ class OllamaService {
         )
         .timeout(requestTimeout);
 
-    if (response.statusCode != 200) {
-      throw Exception(
-        'Ollama returned HTTP ${response.statusCode}\n${response.body}',
-      );
-    }
+   if (response.statusCode != 200) {
+  throw Exception('''
+STATUS: ${response.statusCode}
 
+BODY:
+${response.body}
+''');
+}
     final dynamic json = jsonDecode(response.body);
 
     if (json is! Map<String, dynamic>) {
@@ -112,15 +114,21 @@ class OllamaService {
         .send(request)
         .timeout(requestTimeout);
 
-    if (response.statusCode != 200) {
-      final errorBody =
-          await response.stream.bytesToString();
+   if (response.statusCode != 200) {
+  final errorBody =
+      await response.stream.bytesToString();
 
-      throw Exception(
-        'Ollama returned HTTP ${response.statusCode}\n$errorBody',
-      );
-    }
+  throw Exception('''
+========================
+OLLAMA ERROR
 
+STATUS: ${response.statusCode}
+
+BODY:
+$errorBody
+========================
+''');
+}
     await for (final line in response.stream
         .transform(utf8.decoder)
         .transform(const LineSplitter())) {

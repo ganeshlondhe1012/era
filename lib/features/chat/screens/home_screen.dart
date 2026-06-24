@@ -5,22 +5,48 @@ import '../widgets/prompt_input.dart';
 import '../widgets/sidebar.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({
+    super.key,
+  });
+
+  static const double _sidebarWidth = 280;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       body: SafeArea(
         child: Row(
           children: [
-            Sidebar(),
+            const SizedBox(
+              width: _sidebarWidth,
+              child: Sidebar(),
+            ),
+
+            VerticalDivider(
+              width: 1,
+              thickness: 1,
+              color: theme.dividerColor,
+            ),
 
             Expanded(
-              child: Column(
-                children: [
-                  ChatArea(),
-                  PromptInput(),
-                ],
+              child: Container(
+                color: theme.colorScheme.surfaceContainerLowest,
+                child: const Column(
+                  children: [
+                    Expanded(
+                      child: ChatArea(),
+                    ),
+
+                    Divider(
+                      height: 1,
+                    ),
+
+                    PromptInput(),
+                  ],
+                ),
               ),
             ),
           ],
