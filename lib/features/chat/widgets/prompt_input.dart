@@ -47,34 +47,53 @@ class _PromptInputState extends State<PromptInput> {
         return Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A1A1A),
+          color: Theme.of(context).colorScheme.surface,
             border: Border(
               top: BorderSide(
                 color: Colors.grey.shade800,
               ),
             ),
           ),
+                
           child: Row(
+           
             children: [
+                              IconButton(
+                  tooltip: 'Attach Document',
+                  icon: const Icon(Icons.attach_file_rounded),
+                  onPressed: isGenerating
+                      ? null
+                      : () {
+                          // TODO: Document upload
+                        },
+                ),
               Expanded(
+              
                 child: TextField(
                   controller: _controller,
                   enabled: !isGenerating,
                   minLines: 1,
-                  maxLines: 6,
+                  maxLines: 8,
                   onChanged: (_) => setState(() {}),
                   decoration: InputDecoration(
                     hintText: isGenerating
                         ? 'Era is generating...'
                         : 'Ask Era anything...',
                     filled: true,
-                    fillColor:
-                        const Color(0xFF2A2A2A),
-                    border: OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
+                    fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                   enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).dividerColor,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 2,
+                        ),
+                      ),
                     contentPadding:
                         const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -89,32 +108,20 @@ class _PromptInputState extends State<PromptInput> {
                 ),
               ),
 
-              const SizedBox(width: 12),
+             
 
-              SizedBox(
-                height: 50,
-                child: isGenerating
-                    ? ElevatedButton(
-                        style:
-                            ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Colors.red,
-                        ),
-                        onPressed: () {
-                          controller.stopGeneration();
-                        },
-                        child: const Icon(
-                          Icons.stop,
-                        ),
-                      )
-                    : ElevatedButton(
-                        onPressed:
-                            hasText ? _sendMessage : null,
-                        child: const Icon(
-                          Icons.send,
-                        ),
+             SizedBox(
+                    width: 42,
+                    height: 52,
+                    child: FilledButton(
+                      onPressed: hasText ? _sendMessage : null,
+                      style: FilledButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: EdgeInsets.zero,
                       ),
-              ),
+                      child: const Icon(Icons.send_rounded),
+                    ),
+                  ),
             ],
           ),
         );
