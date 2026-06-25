@@ -1,6 +1,5 @@
 import '../../../features/rag/models/document_chunk.dart';
 import '../../../features/rag/models/document_embedding.dart';
-import '../../../features/rag/services/embedding_provider.dart';
 
 /// Interface for generating embeddings.
 ///

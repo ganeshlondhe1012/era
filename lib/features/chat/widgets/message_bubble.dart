@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/message.dart';
-import 'markdown_message.dart';
+
 import 'message_actions.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -53,10 +53,9 @@ class MessageBubble extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MarkdownMessage(
-                    text: message.text,
-                  ),
-
+                SelectableText(
+                        message.text,
+                      ),
                   const SizedBox(height: 8),
 
                   Align(

@@ -93,17 +93,7 @@ class SettingsNavigation extends StatelessWidget {
       case SettingsCategory.chat:
         return Icons.chat_bubble_outline;
 
-      case SettingsCategory.memory:
-        return Icons.memory_outlined;
-
-      case SettingsCategory.voice:
-        return Icons.mic_none_outlined;
-
-      case SettingsCategory.privacy:
-        return Icons.security_outlined;
-
-      case SettingsCategory.advanced:
-        return Icons.settings_outlined;
+     
     }
   }
 }

@@ -20,8 +20,8 @@ import '../models/chat_response.dart';
 /// - Storage
 class ChatService {
   const ChatService({
-    required AIProvider provider,
-  }) : _provider = provider;
+    required this._provider,
+  });
 
   final AIProvider _provider;
 

@@ -5,10 +5,9 @@ import 'text_extractor.dart';
 
 class ImportDocumentService {
   ImportDocumentService({
-    required RagPipeline pipeline,
-    required List<TextExtractor> extractors,
-  })  : _pipeline = pipeline,
-        _extractors = extractors;
+    required this._pipeline,
+    required this._extractors,
+  });
 
   final RagPipeline _pipeline;
   final List<TextExtractor> _extractors;

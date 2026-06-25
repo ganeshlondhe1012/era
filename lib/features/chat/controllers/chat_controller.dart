@@ -17,6 +17,7 @@ import '../../memory/repository/local_repository.dart';
 
 import '../services/chat_pipeline.dart';
 import '../services/prompt_builder.dart';
+import '../services/chat_export_service.dart';
 
 class ChatController extends ChangeNotifier {
 ChatController({
@@ -373,6 +374,48 @@ void selectModel(String model) {
       title: title,
     ),
   );
+}
+
+  int get totalMessages {
+  return _chats.fold(
+    0,
+    (total, chat) => total + chat.messages.length,
+  );
+}
+
+  Future<void> clearAllChats() async {
+  _chats
+    ..clear()
+    ..add(
+      Chat(
+        id: DateTime.now()
+            .millisecondsSinceEpoch
+            .toString(),
+        title: 'New Chat',
+        createdAt: DateTime.now(),
+        messages: const [],
+      ),
+    );
+
+  _currentChatIndex = 0;
+
+  await _saveChats();
+
+  notifyListeners();
+}
+
+  Future<void> exportAllChats() async {
+  const exporter = ChatExportService();
+
+  for (final chat in _chats) {
+    await exporter.exportMarkdown(chat);
+  }
+}
+
+  int get totalChats => _chats.length;
+
+  String get estimatedStorage {
+  return 'Calculating...';
 }
 
   Future<void> deleteCurrentChat() async {

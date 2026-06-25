@@ -3,8 +3,8 @@ import '../repository/local_repository.dart';
 
 class MemoryService {
   MemoryService({
-    required LocalMemoryRepository repository,
-  }) : _repository = repository;
+    required this._repository,
+  });
 
   final LocalMemoryRepository _repository;
 

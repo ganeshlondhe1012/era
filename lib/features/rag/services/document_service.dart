@@ -3,8 +3,8 @@ import '../repository/document_repository.dart';
 
 class DocumentService {
   DocumentService({
-    required DocumentRepository repository,
-  }) : _repository = repository;
+    required this._repository,
+  });
 
   final DocumentRepository _repository;
 

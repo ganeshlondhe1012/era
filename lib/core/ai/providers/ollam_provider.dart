@@ -6,8 +6,8 @@ import 'ai_provider.dart';
 
 class OllamaProvider implements AIProvider {
   OllamaProvider({
-    required OllamaService service,
-  }) : _service = service;
+    required this._service,
+  });
 
   final OllamaService _service;
 

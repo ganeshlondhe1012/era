@@ -10,16 +10,12 @@ import 'prompt_builder.dart';
 
 class ChatPipeline {
   ChatPipeline({
-    required ChatService chatService,
-    required MemoryExtractor memoryExtractor,
-    required MemoryService memoryService,
-    required PromptBuilder promptBuilder,
+    required this._chatService,
+    required this._memoryExtractor,
+    required this._memoryService,
+    required this._promptBuilder,
     ConversationContextBuilder? contextBuilder,
-  })  : _chatService = chatService,
-        _memoryExtractor = memoryExtractor,
-        _memoryService = memoryService,
-        _promptBuilder = promptBuilder,
-        _contextBuilder =
+  })  : _contextBuilder =
             contextBuilder ??
                 const ConversationContextBuilder();
 

@@ -32,7 +32,7 @@ class DocumentLibraryScreen extends StatelessWidget {
           body: controller.hasDocuments
               ? ListView.separated(
                   itemCount: controller.documentCount,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final document =

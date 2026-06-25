@@ -4,8 +4,8 @@ import '../models/document_chunk.dart';
 
 class RagChatService {
   RagChatService({
-    required ChatService chatService,
-  }) : _chatService = chatService;
+    required this._chatService,
+  });
 
   final ChatService _chatService;
 

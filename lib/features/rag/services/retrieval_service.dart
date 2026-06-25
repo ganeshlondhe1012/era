@@ -4,10 +4,9 @@ import 'vector_store.dart';
 
 class RetrievalService {
   RetrievalService({
-    required EmbeddingProvider embeddingProvider,
-    required VectorStore vectorStore,
-  })  : _embeddingProvider = embeddingProvider,
-        _vectorStore = vectorStore;
+    required this._embeddingProvider,
+    required this._vectorStore,
+  });
 
   final EmbeddingProvider _embeddingProvider;
   final VectorStore _vectorStore;

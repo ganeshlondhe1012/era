@@ -40,43 +40,26 @@ class Sidebar extends StatelessWidget {
                           12,
                         ),
                   child: SizedBox(
-                    width: double.infinity,
-                   child:FilledButton.icon(
-                          style: FilledButton.styleFrom(
-                              minimumSize:
-                                  const Size.fromHeight(48),
-                              shape:
-                                  RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(
-                                              14),
+                              width: double.infinity,
+                              child: FilledButton.icon(
+                                onPressed: () async {
+                                  await controller.createNewChat();
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('New Chat'),
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(48),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
-                          ),
-                      )
-                  ),
+                                ),
+                              ),
+                            ),
                 ),
                 
-                const Divider(height: 1),
+               
 
-                  Padding(
-                    padding:
-                        const EdgeInsets.all(12),
-                    child: ListTile(
-                      shape:
-                          RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(12),
-                      ),
-                      leading:
-                          const Icon(Icons.settings_outlined),
-                      trailing:
-                          const Icon(Icons.chevron_right),
-                      title:
-                          const Text("Settings"),
-                      onTap: ...
-                    ),
-                  ),
-
+                
                 Padding(
             padding:
                 const EdgeInsets.fromLTRB(

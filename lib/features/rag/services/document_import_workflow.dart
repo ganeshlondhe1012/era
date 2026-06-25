@@ -8,12 +8,10 @@ import 'import_document_service.dart';
 
 class DocumentImportWorkflow {
   DocumentImportWorkflow({
-    required FilePickerService filePickerService,
-    required ImportDocumentService importService,
-    required DocumentService documentService,
-  })  : _filePickerService = filePickerService,
-        _importService = importService,
-        _documentService = documentService;
+    required this._filePickerService,
+    required this._importService,
+    required this._documentService,
+  });
 
   final FilePickerService _filePickerService;
   final ImportDocumentService _importService;

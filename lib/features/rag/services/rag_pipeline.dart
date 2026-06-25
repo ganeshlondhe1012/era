@@ -9,16 +9,12 @@ import 'vector_store.dart';
 
 class RagPipeline {
   RagPipeline({
-    required DocumentService documentService,
-    required ChunkingService chunkingService,
-    required EmbeddingProvider embeddingProvider,
-    required VectorStore vectorStore,
-    required RetrievalService retrievalService,
-  })  : _documentService = documentService,
-        _chunkingService = chunkingService,
-        _embeddingProvider = embeddingProvider,
-        _vectorStore = vectorStore,
-        _retrievalService = retrievalService;
+    required this._documentService,
+    required this._chunkingService,
+    required this._embeddingProvider,
+    required this._vectorStore,
+    required this._retrievalService,
+  });
 
   final DocumentService _documentService;
   final ChunkingService _chunkingService;

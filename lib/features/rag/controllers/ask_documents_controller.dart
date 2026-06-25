@@ -5,8 +5,8 @@ import '../services/rag_pipeline.dart';
 
 class AskDocumentsController extends ChangeNotifier {
   AskDocumentsController({
-    required RagPipeline ragPipeline,
-  }) : _ragPipeline = ragPipeline;
+    required this._ragPipeline,
+  });
 
   final RagPipeline _ragPipeline;
 

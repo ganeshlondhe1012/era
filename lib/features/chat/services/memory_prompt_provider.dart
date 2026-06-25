@@ -2,8 +2,8 @@ import '../../memory/controllers/memory_controller.dart';
 
 class MemoryPromptProvider {
   const MemoryPromptProvider({
-    required MemoryController memoryController,
-  }) : _memoryController = memoryController;
+    required this._memoryController,
+  });
 
   final MemoryController _memoryController;
 

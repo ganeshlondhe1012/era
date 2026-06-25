@@ -6,10 +6,9 @@ import '../services/import_document_service.dart';
 
 class DocumentController extends ChangeNotifier {
   DocumentController({
-    required DocumentService documentService,
-    required ImportDocumentService importService,
-  })  : _documentService = documentService,
-        _importService = importService;
+    required this._documentService,
+    required this._importService,
+  });
 
   final DocumentService _documentService;
   final ImportDocumentService _importService;

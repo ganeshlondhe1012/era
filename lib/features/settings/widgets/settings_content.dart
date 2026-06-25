@@ -4,9 +4,12 @@ import 'package:provider/provider.dart';
 import '../controllers/settings_controller.dart';
 import '../models/app_settings.dart';
 import '../models/settings_category.dart';
+import 'package:provider/provider.dart';
+
+import '../../chat/controllers/chat_controller.dart';
 
 import '../../ai/widgets/ai_settings_panel.dart';
-
+import '../../chat/controllers/chat_controller.dart';
 class SettingsContent extends StatelessWidget {
   const SettingsContent({
     super.key,
@@ -17,53 +20,23 @@ class SettingsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (category) {
-      case SettingsCategory.appearance:
-        return const _AppearanceSettings();
+   switch (category) {
+  case SettingsCategory.appearance:
+    return const _GeneralSettings();
 
-     case SettingsCategory.ai:
-  return const AISettingsPanel();
+  case SettingsCategory.ai:
+    return const AISettingsPanel();
 
-      case SettingsCategory.chat:
-        return const _ComingSoon(
-          title: 'Chat Settings',
-          description:
-              'Customize chat appearance, markdown, code blocks and message behavior.',
-        );
+  case SettingsCategory.chat:
+    return const _ChatSettings();
 
-      case SettingsCategory.memory:
-        return const _ComingSoon(
-          title: 'Memory Settings',
-          description:
-              'Manage long-term memory, summaries and knowledge storage.',
-        );
-
-      case SettingsCategory.voice:
-        return const _ComingSoon(
-          title: 'Voice Settings',
-          description:
-              'Configure speech recognition and text-to-speech.',
-        );
-
-      case SettingsCategory.privacy:
-        return const _ComingSoon(
-          title: 'Privacy',
-          description:
-              'Manage telemetry, offline mode and security options.',
-        );
-
-      case SettingsCategory.advanced:
-        return const _ComingSoon(
-          title: 'Advanced',
-          description:
-              'Developer tools, logs and experimental features.',
-        );
-    }
+ 
+}
   }
 }
 
-class _AppearanceSettings extends StatelessWidget {
-  const _AppearanceSettings();
+class _GeneralSettings extends StatelessWidget {
+  const _GeneralSettings();
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +46,14 @@ class _AppearanceSettings extends StatelessWidget {
           padding: const EdgeInsets.all(24),
           children: [
             Text(
-              'Appearance',
+              'General',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
 
             const SizedBox(height: 8),
 
             Text(
-              'Customize the look and feel of Era.',
+              'General application preferences.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
@@ -164,46 +137,224 @@ class _AppearanceSettings extends StatelessWidget {
   }
 }
 
-class _ComingSoon extends StatelessWidget {
-  const _ComingSoon({
-    required this.title,
-    required this.description,
-  });
-
-  final String title;
-  final String description;
+ class _ChatSettings extends StatelessWidget {
+  const _ChatSettings();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.construction_outlined,
-                size: 72,
-                color: Theme.of(context).colorScheme.primary,
+    return Consumer<ChatController>(
+      builder: (context, controller, _) {
+        return ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            Text(
+              'Chat',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+
+            const SizedBox(height: 8),
+
+            Text(
+              'Manage conversations and chat data.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+
+            const SizedBox(height: 32),
+
+            //------------------------------------------------------------------
+            // Conversation
+            //------------------------------------------------------------------
+
+            Card(
+              child: ListTile(
+                leading: const Icon(
+                  Icons.delete_forever_outlined,
+                ),
+                title: const Text(
+                  'Clear All Chats',
+                ),
+                subtitle: const Text(
+                  'Delete every conversation stored in Era.',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  final confirm =
+                      await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Delete All Chats',
+                        ),
+                        content: const Text(
+                          'This action cannot be undone.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(
+                                context,
+                                false,
+                              );
+                            },
+                            child: const Text(
+                              'Cancel',
+                            ),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(
+                                context,
+                                true,
+                              );
+                            },
+                            child: const Text(
+                              'Delete',
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirm != true) {
+                    return;
+                  }
+
+                  await controller.clearAllChats();
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'All chats deleted.',
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
-              const SizedBox(height: 24),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 16),
+
+            //------------------------------------------------------------------
+            // Export
+            //------------------------------------------------------------------
+
+            Card(
+              child: ListTile(
+                leading: const Icon(
+                  Icons.upload_file_outlined,
+                ),
+                title: const Text(
+                  'Export All Chats',
+                ),
+                subtitle: const Text(
+                  'Export every conversation as Markdown.',
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  await controller.exportAllChats();
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Chats exported successfully.',
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
-              const SizedBox(height: 12),
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge,
+            ),
+
+            const SizedBox(height: 16),
+
+            //------------------------------------------------------------------
+            // Backup
+            //------------------------------------------------------------------
+
+            const Card(
+              child: ListTile(
+                enabled: false,
+                leading: Icon(
+                  Icons.backup_outlined,
+                ),
+                title: Text(
+                  'Backup Chats',
+                ),
+                subtitle: Text(
+                  'Coming soon',
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+
+            const SizedBox(height: 16),
+
+            //------------------------------------------------------------------
+            // Cache
+            //------------------------------------------------------------------
+
+            const Card(
+              child: ListTile(
+                enabled: false,
+                leading: Icon(
+                  Icons.cleaning_services_outlined,
+                ),
+                title: Text(
+                  'Clear Temporary Cache',
+                ),
+                subtitle: Text(
+                  'Coming soon',
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            //------------------------------------------------------------------
+            // Statistics
+            //------------------------------------------------------------------
+
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text(
+                      'Conversations',
+                    ),
+                    trailing: Text(
+                      controller.totalChats.toString(),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    title: const Text(
+                      'Messages',
+                    ),
+                    trailing: Text(
+                      controller.totalMessages.toString(),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    title: const Text(
+                      'Storage Used',
+                    ),
+                    trailing: Text(
+                      controller.estimatedStorage,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

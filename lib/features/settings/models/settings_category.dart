@@ -1,11 +1,7 @@
 enum SettingsCategory {
   appearance,
   ai,
-  chat,
-  memory,
-  voice,
-  privacy,
-  advanced,
+  chat
 }
 
 extension SettingsCategoryExtension on SettingsCategory {
@@ -20,17 +16,9 @@ extension SettingsCategoryExtension on SettingsCategory {
       case SettingsCategory.chat:
         return 'Chat';
 
-      case SettingsCategory.memory:
-        return 'Memory';
+     
 
-      case SettingsCategory.voice:
-        return 'Voice';
-
-      case SettingsCategory.privacy:
-        return 'Privacy';
-
-      case SettingsCategory.advanced:
-        return 'Advanced';
+      
     }
   }
 
@@ -45,17 +33,7 @@ extension SettingsCategoryExtension on SettingsCategory {
       case SettingsCategory.chat:
         return 'Chat experience';
 
-      case SettingsCategory.memory:
-        return 'Long-term memory';
-
-      case SettingsCategory.voice:
-        return 'Speech features';
-
-      case SettingsCategory.privacy:
-        return 'Security and privacy';
-
-      case SettingsCategory.advanced:
-        return 'Developer options';
+     
     }
   }
 }
