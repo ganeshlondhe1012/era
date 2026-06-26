@@ -13,6 +13,7 @@ import '../features/settings/models/app_settings.dart';
 
 import '../features/ai/controllers/ai_settings_controller.dart';
 
+import '../features/documents/controllers/document_controller.dart';
 class EraApp extends StatelessWidget {
   const EraApp({super.key});
 
@@ -36,6 +37,9 @@ class EraApp extends StatelessWidget {
           },
         ),
         
+        ChangeNotifierProvider(
+          create: (_) => DocumentController(),
+        ),
         ChangeNotifierProvider<ChatController>(
           create: (_) {
             final ollamaService = OllamaService();

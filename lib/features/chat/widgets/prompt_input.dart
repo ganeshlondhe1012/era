@@ -3,6 +3,14 @@ import 'package:provider/provider.dart';
 
 import '../controllers/chat_controller.dart';
 
+
+
+import '../../documents/controllers/document_controller.dart';
+import '../../documents/models/document_attachment.dart';
+import '../../documents/services/document_picker_service.dart';
+import '../../documents/services/document_text_extractor.dart';
+import '../../documents/widgets/attached_document_card.dart';
+
 class PromptInput extends StatefulWidget {
   const PromptInput({super.key});
 
@@ -13,7 +21,10 @@ class PromptInput extends StatefulWidget {
 class _PromptInputState extends State<PromptInput> {
   final TextEditingController _controller =
       TextEditingController();
+  
+  final _picker = const DocumentPickerService();
 
+final _extractor = const DocumentTextExtractor();
   @override
   void dispose() {
     _controller.dispose();
@@ -22,7 +33,6 @@ class _PromptInputState extends State<PromptInput> {
 
   void _sendMessage() {
     final text = _controller.text.trim();
-
     if (text.isEmpty) {
       return;
     }
@@ -33,6 +43,47 @@ class _PromptInputState extends State<PromptInput> {
 
     setState(() {});
   }
+
+  Future<void> _pickDocument() async {
+  try {
+    final file = await _picker.pickDocument();
+
+    if (file == null || file.path == null) {
+      return;
+    }
+
+    final text = await _extractor.extract(
+      path: file.path!,
+    );
+
+    final document = DocumentAttachment(
+      id: DateTime.now()
+          .millisecondsSinceEpoch
+          .toString(),
+      name: file.name,
+      path: file.path!,
+      mimeType: file.extension ?? '',
+      text: text,
+      uploadedAt: DateTime.now(),
+    );
+
+    if (!mounted) return;
+
+    await context
+        .read<DocumentController>()
+        .attach(document);
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Failed to attach document.\n$e',
+        ),
+      ),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +106,32 @@ class _PromptInputState extends State<PromptInput> {
             ),
           ),
                 
-          child: Row(
-           
-            children: [
-                              IconButton(
-                  tooltip: 'Attach Document',
-                  icon: const Icon(Icons.attach_file_rounded),
-                  onPressed: isGenerating
-                      ? null
-                      : () {
-                          // TODO: Document upload
-                        },
-                ),
+                        child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    Consumer<DocumentController>(
+                      builder: (context, documentController, _) {
+                        if (!documentController.hasAttachment) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return AttachedDocumentCard(
+                          document: documentController.attachment!,
+                          onRemove: documentController.remove,
+                        );
+                      },
+                    ),
+
+                    Row(
+                      children: [
+                             IconButton(
+                          tooltip: 'Attach Document',
+                          icon: const Icon(Icons.attach_file_rounded),
+                          onPressed: isGenerating
+                              ? null
+                              : _pickDocument,
+                        ),
               Expanded(
               
                 child: TextField(
@@ -109,8 +174,9 @@ class _PromptInputState extends State<PromptInput> {
               ),
 
              
+                  const SizedBox(width: 8),
 
-             SizedBox(
+                  SizedBox(
                     width: 42,
                     height: 52,
                     child: FilledButton(
@@ -122,6 +188,8 @@ class _PromptInputState extends State<PromptInput> {
                       child: const Icon(Icons.send_rounded),
                     ),
                   ),
+                ],
+              ),
             ],
           ),
         );
