@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 class DocumentTextExtractor {
   const DocumentTextExtractor();
 
@@ -9,28 +10,53 @@ class DocumentTextExtractor {
     final extension =
         path.split('.').last.toLowerCase();
 
-    switch (extension) {
-      case 'txt':
-      case 'md':
-        return _readTextFile(path);
+        switch (extension) {
+          case 'txt':
+          case 'md':
+            return _readTextFile(path);
 
-      case 'pdf':
-        throw UnimplementedError(
-          'PDF extraction not implemented yet.',
-        );
+          case 'pdf':
+            return _readPdf(path);
 
-      case 'docx':
-        throw UnimplementedError(
-          'DOCX extraction not implemented yet.',
-        );
+          case 'docx':
+            throw UnimplementedError(
+              'DOCX extraction not implemented yet.',
+            );
 
-      default:
-        throw UnsupportedError(
-          'Unsupported document type: $extension',
-        );
-    }
+          default:
+            throw UnsupportedError(
+              'Unsupported document type: $extension',
+            );
+        }
   }
 
+ Future<String> _readPdf(String path) async {
+  final file = File(path);
+
+  if (!await file.exists()) {
+    throw Exception('PDF not found.');
+  }
+
+  final bytes = await file.readAsBytes();
+
+  final document = PdfDocument(inputBytes: bytes);
+
+  try {
+    final extractor = PdfTextExtractor(document);
+
+    final text = extractor.extractText();
+
+    if (text.trim().isEmpty) {
+      throw Exception(
+        'No readable text found in PDF.',
+      );
+    }
+
+    return text;
+  } finally {
+    document.dispose();
+  }
+}
   Future<String> _readTextFile(
     String path,
   ) async {
