@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/message.dart';
 
 import 'message_actions.dart';
+import 'message/message_content.dart';
 
 class MessageBubble extends StatelessWidget {
   const MessageBubble({
@@ -70,14 +71,10 @@ class MessageBubble extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-               SelectableText(
-                      message.text,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(
-                            height: 1.5,
-                          ),
+               MessageContent(
+                       text: message.text,
+                    
+                          
                     ),
                   const SizedBox(height: 8),
 
