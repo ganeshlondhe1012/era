@@ -165,51 +165,43 @@ class _ChatAreaState extends State<ChatArea> {
             );
           }
 
-          return Container(
-            color: Theme.of(context).colorScheme.surface,
-            NotificationListener<ScrollNotification>(
-                      onNotification: (notification) {
-                        if (_scroll.isNearBottom) {
-                          _scroll.enableAutoScroll();
-                        } else {
-                          _scroll.disableAutoScroll();
-                        }
+                        return Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (_scroll.isNearBottom) {
+                        _scroll.enableAutoScroll();
+                      } else {
+                        _scroll.disableAutoScroll();
+                      }
 
-                        return false;
+                      return false;
+                    },
+                    child: ListView.builder(
+                      controller: _scroll.scrollController,
+                      padding: const EdgeInsets.fromLTRB(
+                        24,
+                        24,
+                        24,
+                        120,
+                      ),
+                      itemCount: controller.messages.length,
+                      itemBuilder: (context, index) {
+                        return Align(
+                          alignment: Alignment.topCenter,
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth: _maxMessageWidth,
+                            ),
+                            child: MessageBubble(
+                              message: controller.messages[index],
+                            ),
+                          ),
+                        );
                       },
-            child: ListView.builder(
-              controller:
-                  _scroll.scrollController,
-              padding:
-                  const EdgeInsets.fromLTRB(
-                24,
-                24,
-                24,
-                120,
-              ),
-              itemCount:
-                  controller.messages.length,
-              itemBuilder:
-                  (context, index) {
-                return Align(
-                  alignment:
-                      Alignment.topCenter,
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(
-                      maxWidth:
-                          _maxMessageWidth,
-                    ),
-                    child: MessageBubble(
-                      message: controller
-                          .messages[index],
                     ),
                   ),
                 );
-              },
-            ),
-            ),
-          );
         },
       ),
     );
