@@ -31,9 +31,13 @@ class _ChatAreaState extends State<ChatArea> {
     return Expanded(
       child: Consumer<ChatController>(
         builder: (context, controller, _) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _scroll.scrollToBottom();
-          });
+         WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted) return;
+
+                  _scroll.scrollToBottom(
+                    animated: controller.messages.length > 1,
+                  );
+                });
 
           if (!controller.hasMessages) {
             return Container(
@@ -162,7 +166,17 @@ class _ChatAreaState extends State<ChatArea> {
           }
 
           return Container(
-            color: theme.colorScheme.surface,
+            color: Theme.of(context).colorScheme.surface,
+            NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (_scroll.isNearBottom) {
+                          _scroll.enableAutoScroll();
+                        } else {
+                          _scroll.disableAutoScroll();
+                        }
+
+                        return false;
+                      },
             child: ListView.builder(
               controller:
                   _scroll.scrollController,
@@ -193,6 +207,7 @@ class _ChatAreaState extends State<ChatArea> {
                   ),
                 );
               },
+            ),
             ),
           );
         },

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+import 'package:markdown/markdown.dart' as md;
+
+import 'code_block.dart';
 
 class MarkdownMessage extends StatelessWidget {
   const MarkdownMessage({
@@ -19,27 +22,54 @@ class MarkdownMessage extends StatelessWidget {
       styleSheet: MarkdownStyleSheet.fromTheme(
         Theme.of(context),
       ).copyWith(
-        p: Theme.of(context)
-            .textTheme
-            .bodyMedium,
-
-        code: TextStyle(
-          fontFamily: 'Consolas',
-          fontSize: 13,
-          backgroundColor:
-              Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest,
+        p: const TextStyle(
+          fontSize: 15,
+          height: 1.6,
         ),
 
-        codeblockDecoration: BoxDecoration(
-          color: Theme.of(context)
-              .colorScheme
-              .surfaceContainerHighest,
-          borderRadius:
-              BorderRadius.circular(12),
+        code: const TextStyle(
+          fontFamily: 'Consolas',
+          fontSize: 14,
+        ),
+
+        h1: const TextStyle(
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
+        ),
+
+        h2: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+        ),
+
+        h3: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
+
+      builders: {
+        'code': _CodeBuilder(),
+      },
+    );
+  }
+}
+
+class _CodeBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(
+    md.Element element,
+    TextStyle? preferredStyle,
+  ) {
+    final language =
+        element.attributes['class']
+            ?.replaceFirst('language-', '');
+
+    final code = element.textContent;
+
+    return CodeBlock(
+      code: code,
+      language: language,
     );
   }
 }
