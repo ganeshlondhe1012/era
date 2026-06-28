@@ -12,15 +12,12 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  SettingsCategory _selectedCategory =
-      SettingsCategory.appearance;
+  SettingsCategory _selectedCategory = SettingsCategory.appearance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      appBar: AppBar(title: const Text('Settings')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           // Desktop / Tablet
@@ -38,11 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 const VerticalDivider(width: 1),
 
-                Expanded(
-                  child: SettingsContent(
-                    category: _selectedCategory,
-                  ),
-                ),
+                Expanded(child: SettingsContent(category: _selectedCategory)),
               ],
             );
           }
@@ -59,8 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     vertical: 8,
                   ),
                   children: SettingsCategory.values.map((category) {
-                    final selected =
-                        category == _selectedCategory;
+                    final selected = category == _selectedCategory;
 
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
@@ -78,11 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
 
-              Expanded(
-                child: SettingsContent(
-                  category: _selectedCategory,
-                ),
-              ),
+              Expanded(child: SettingsContent(category: _selectedCategory)),
             ],
           );
         },

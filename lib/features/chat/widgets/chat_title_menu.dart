@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/chat_menu_action.dart';
 
 class ChatTileMenu extends StatelessWidget {
-  const ChatTileMenu({
-    super.key,
-    required this.onSelected,
-  });
+  const ChatTileMenu({super.key, required this.onSelected});
 
   final ValueChanged<ChatMenuAction> onSelected;
 
@@ -23,13 +20,13 @@ class ChatTileMenu extends StatelessWidget {
             title: Text('Rename'),
           ),
         ),
-                    PopupMenuItem(
-                  value: ChatMenuAction.pin,
-                  child: ListTile(
-                    leading: Icon(Icons.push_pin_outlined),
-                    title: Text('Pin'),
-                  ),
-                ),
+        PopupMenuItem(
+          value: ChatMenuAction.pin,
+          child: ListTile(
+            leading: Icon(Icons.push_pin_outlined),
+            title: Text('Pin'),
+          ),
+        ),
         PopupMenuItem(
           value: ChatMenuAction.duplicate,
           child: ListTile(
@@ -48,16 +45,8 @@ class ChatTileMenu extends StatelessWidget {
         PopupMenuItem(
           value: ChatMenuAction.delete,
           child: ListTile(
-            leading: Icon(
-              Icons.delete_outline,
-              color: Colors.red,
-            ),
-            title: Text(
-              'Delete',
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
+            leading: Icon(Icons.delete_outline, color: Colors.red),
+            title: Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ),
       ],

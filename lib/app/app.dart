@@ -14,6 +14,7 @@ import '../features/settings/models/app_settings.dart';
 import '../features/ai/controllers/ai_settings_controller.dart';
 
 import '../features/documents/controllers/document_controller.dart';
+
 class EraApp extends StatelessWidget {
   const EraApp({super.key});
 
@@ -36,21 +37,15 @@ class EraApp extends StatelessWidget {
             return controller;
           },
         ),
-        
-        ChangeNotifierProvider(
-          create: (_) => DocumentController(),
-        ),
+
+        ChangeNotifierProvider(create: (_) => DocumentController()),
         ChangeNotifierProvider<ChatController>(
           create: (_) {
             final ollamaService = OllamaService();
 
-            final provider = OllamaProvider(
-              service: ollamaService,
-            );
+            final provider = OllamaProvider(service: ollamaService);
 
-            return ChatController(
-              provider: provider,
-            );
+            return ChatController(provider: provider);
           },
         ),
       ],
@@ -64,9 +59,7 @@ class EraApp extends StatelessWidget {
 
             darkTheme: AppTheme.dark(),
 
-            themeMode: _toFlutterThemeMode(
-              settings.themeMode,
-            ),
+            themeMode: _toFlutterThemeMode(settings.themeMode),
 
             home: const HomeScreen(),
           );
@@ -75,9 +68,7 @@ class EraApp extends StatelessWidget {
     );
   }
 
-  ThemeMode _toFlutterThemeMode(
-    AppThemeMode mode,
-  ) {
+  ThemeMode _toFlutterThemeMode(AppThemeMode mode) {
     switch (mode) {
       case AppThemeMode.system:
         return ThemeMode.system;

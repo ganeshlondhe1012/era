@@ -1,7 +1,1 @@
-enum ChatMenuAction {
-  rename,
-  pin,
-  duplicate,
-  export,
-  delete,
-}
+enum ChatMenuAction { rename, pin, duplicate, export, delete }

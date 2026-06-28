@@ -5,9 +5,7 @@ import '../../ai/controllers/ai_settings_controller.dart';
 import '../../ai/models/ai_provider.dart';
 
 class ProviderDropdown extends StatelessWidget {
-  const ProviderDropdown({
-    super.key,
-  });
+  const ProviderDropdown({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +15,9 @@ class ProviderDropdown extends StatelessWidget {
           child: ListTile(
             leading: const Icon(Icons.smart_toy_outlined),
 
-            title: const Text(
-              'AI Provider',
-            ),
+            title: const Text('AI Provider'),
 
-            subtitle: const Text(
-              'Select the inference engine',
-            ),
+            subtitle: const Text('Select the inference engine'),
 
             trailing: DropdownButton<AIProvider>(
               value: controller.settings.provider,
@@ -43,17 +37,13 @@ class ProviderDropdown extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        provider.isOffline
-                            ? Icons.computer
-                            : Icons.cloud,
+                        provider.isOffline ? Icons.computer : Icons.cloud,
                         size: 18,
                       ),
 
                       const SizedBox(width: 8),
 
-                      Text(
-                        provider.displayName,
-                      ),
+                      Text(provider.displayName),
                     ],
                   ),
                 );

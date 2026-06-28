@@ -7,11 +7,7 @@ class FilePickerService {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
-      allowedExtensions: const [
-        'txt',
-        'md',
-        'markdown',
-      ],
+      allowedExtensions: const ['txt', 'md', 'markdown'],
     );
 
     if (result == null) {
@@ -29,20 +25,13 @@ class FilePickerService {
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
-      allowedExtensions: const [
-        'txt',
-        'md',
-        'markdown',
-      ],
+      allowedExtensions: const ['txt', 'md', 'markdown'],
     );
 
     if (result == null) {
       return [];
     }
 
-    return result.files
-        .map((e) => e.path)
-        .whereType<String>()
-        .toList();
+    return result.files.map((e) => e.path).whereType<String>().toList();
   }
 }

@@ -8,12 +8,7 @@ class DocumentPickerService {
       allowMultiple: false,
       withData: false,
       type: FileType.custom,
-      allowedExtensions: const [
-        'pdf',
-        'txt',
-        'md',
-        'docx',
-      ],
+      allowedExtensions: const ['pdf', 'txt', 'md', 'docx'],
     );
 
     if (result == null || result.files.isEmpty) {

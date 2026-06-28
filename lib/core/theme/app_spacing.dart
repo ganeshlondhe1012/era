@@ -19,48 +19,35 @@ class AppSpacing {
 
   static const double xxxl = 32;
 
-  static const EdgeInsets page =
-      EdgeInsets.all(xl);
+  static const EdgeInsets page = EdgeInsets.all(xl);
 
-  static const EdgeInsets card =
-      EdgeInsets.all(lg);
+  static const EdgeInsets card = EdgeInsets.all(lg);
 
-  static const EdgeInsets bubble =
-      EdgeInsets.symmetric(
-        horizontal: lg,
-        vertical: md,
-      );
+  static const EdgeInsets bubble = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: md,
+  );
 
-  static const EdgeInsets section =
-      EdgeInsets.symmetric(
-        horizontal: xl,
-        vertical: lg,
-      );
+  static const EdgeInsets section = EdgeInsets.symmetric(
+    horizontal: xl,
+    vertical: lg,
+  );
 
-  static const SizedBox gapXS =
-      SizedBox(height: xs);
+  static const SizedBox gapXS = SizedBox(height: xs);
 
-  static const SizedBox gapSM =
-      SizedBox(height: sm);
+  static const SizedBox gapSM = SizedBox(height: sm);
 
-  static const SizedBox gapMD =
-      SizedBox(height: md);
+  static const SizedBox gapMD = SizedBox(height: md);
 
-  static const SizedBox gapLG =
-      SizedBox(height: lg);
+  static const SizedBox gapLG = SizedBox(height: lg);
 
-  static const SizedBox gapXL =
-      SizedBox(height: xl);
+  static const SizedBox gapXL = SizedBox(height: xl);
 
-  static const SizedBox hGapSM =
-      SizedBox(width: sm);
+  static const SizedBox hGapSM = SizedBox(width: sm);
 
-  static const SizedBox hGapMD =
-      SizedBox(width: md);
+  static const SizedBox hGapMD = SizedBox(width: md);
 
-  static const SizedBox hGapLG =
-      SizedBox(width: lg);
+  static const SizedBox hGapLG = SizedBox(width: lg);
 
-  static const SizedBox hGapXL =
-      SizedBox(width: xl);
+  static const SizedBox hGapXL = SizedBox(width: xl);
 }

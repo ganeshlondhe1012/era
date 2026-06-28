@@ -11,9 +11,7 @@ class ConversationContextBuilder {
     final buffer = StringBuffer();
 
     final history = messages.length > maxMessages
-        ? messages.sublist(
-            messages.length - maxMessages,
-          )
+        ? messages.sublist(messages.length - maxMessages)
         : messages;
 
     if (history.isNotEmpty) {

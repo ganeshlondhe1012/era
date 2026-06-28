@@ -30,22 +30,14 @@ class DocumentEmbedding {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'chunkId': chunkId,
-      'documentId': documentId,
-      'vector': vector,
-    };
+    return {'chunkId': chunkId, 'documentId': documentId, 'vector': vector};
   }
 
-  factory DocumentEmbedding.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory DocumentEmbedding.fromMap(Map<String, dynamic> map) {
     return DocumentEmbedding(
       chunkId: map['chunkId'] as String,
       documentId: map['documentId'] as String,
-      vector: List<double>.from(
-        map['vector'] as List,
-      ),
+      vector: List<double>.from(map['vector'] as List),
     );
   }
 
@@ -58,10 +50,5 @@ class DocumentEmbedding {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(
-        chunkId,
-        documentId,
-        Object.hashAll(vector),
-      );
+  int get hashCode => Object.hash(chunkId, documentId, Object.hashAll(vector));
 }

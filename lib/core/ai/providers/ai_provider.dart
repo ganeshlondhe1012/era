@@ -35,15 +35,9 @@ abstract class AIProvider {
     required String prompt,
     required String model,
   }) async* {
-    final response = await generateResponse(
-      prompt: prompt,
-      model: model,
-    );
+    final response = await generateResponse(prompt: prompt, model: model);
 
-    yield AIResponseChunk(
-      text: response.text,
-      isDone: true,
-    );
+    yield AIResponseChunk(text: response.text, isDone: true);
   }
 
   /// Releases any resources owned by the provider.

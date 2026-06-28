@@ -51,8 +51,7 @@ class AISettings {
       topP: topP ?? this.topP,
       contextLength: contextLength ?? this.contextLength,
       streaming: streaming ?? this.streaming,
-      keepAliveMinutes:
-          keepAliveMinutes ?? this.keepAliveMinutes,
+      keepAliveMinutes: keepAliveMinutes ?? this.keepAliveMinutes,
     );
   }
 
@@ -68,26 +67,17 @@ class AISettings {
     };
   }
 
-  factory AISettings.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory AISettings.fromJson(Map<String, dynamic> json) {
     return AISettings(
       provider: AIProviderExtension.fromId(
         json['provider']?.toString() ?? 'ollama',
       ),
       model: json['model']?.toString() ?? '',
-      temperature:
-          (json['temperature'] as num?)?.toDouble() ?? 0.7,
-      topP:
-          (json['topP'] as num?)?.toDouble() ?? 0.9,
-      contextLength:
-          (json['contextLength'] as num?)?.toInt() ??
-              4096,
-      streaming:
-          json['streaming'] as bool? ?? true,
-      keepAliveMinutes:
-          (json['keepAliveMinutes'] as num?)?.toInt() ??
-              5,
+      temperature: (json['temperature'] as num?)?.toDouble() ?? 0.7,
+      topP: (json['topP'] as num?)?.toDouble() ?? 0.9,
+      contextLength: (json['contextLength'] as num?)?.toInt() ?? 4096,
+      streaming: json['streaming'] as bool? ?? true,
+      keepAliveMinutes: (json['keepAliveMinutes'] as num?)?.toInt() ?? 5,
     );
   }
 }

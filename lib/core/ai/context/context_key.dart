@@ -4,9 +4,7 @@ class ContextKey<T> {
   final String name;
 
   @override
-  bool operator ==(Object other) =>
-      other is ContextKey &&
-      other.name == name;
+  bool operator ==(Object other) => other is ContextKey && other.name == name;
 
   @override
   int get hashCode => name.hashCode;

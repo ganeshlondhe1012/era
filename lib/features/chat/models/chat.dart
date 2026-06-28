@@ -15,7 +15,7 @@ class Chat {
     required this.title,
     required this.createdAt,
     required this.messages,
-     this.isPinned = false,
+    this.isPinned = false,
   });
 
   Chat copyWith({
@@ -44,29 +44,23 @@ class Chat {
       'id': id,
       'title': title,
       'createdAt': createdAt.toIso8601String(),
-      'messages': messages
-          .map((message) => message.toMap())
-          .toList(),
+      'messages': messages.map((message) => message.toMap()).toList(),
       'isPinned': isPinned,
     };
   }
 
   /// Deserialize chat from persistence.
-  factory Chat.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory Chat.fromMap(Map<String, dynamic> map) {
     return Chat(
-            id: map['id'] as String,
-            title: map['title'] as String,
-            createdAt: DateTime.parse(
-              map['createdAt'] as String,
-            ),
-            messages: (map['messages'] as List<dynamic>)
-                .cast<Map<String, dynamic>>()
-                .map(Message.fromMap)
-                .toList(),
-            isPinned: map['isPinned'] as bool? ?? false,
-          );
+      id: map['id'] as String,
+      title: map['title'] as String,
+      createdAt: DateTime.parse(map['createdAt'] as String),
+      messages: (map['messages'] as List<dynamic>)
+          .cast<Map<String, dynamic>>()
+          .map(Message.fromMap)
+          .toList(),
+      isPinned: map['isPinned'] as bool? ?? false,
+    );
   }
 
   @override
@@ -87,11 +81,6 @@ class Chat {
 
   @override
   int get hashCode {
-    return Object.hash(
-      id,
-      title,
-      createdAt,
-      Object.hashAll(messages),
-    );
+    return Object.hash(id, title, createdAt, Object.hashAll(messages));
   }
 }

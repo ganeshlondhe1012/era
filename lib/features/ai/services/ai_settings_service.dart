@@ -9,8 +9,7 @@ class AISettingsService {
 
   static const String _storageKey = 'era_ai_settings';
 
-  static final AISettingsService instance =
-      AISettingsService._();
+  static final AISettingsService instance = AISettingsService._();
 
   SharedPreferences? _preferences;
 
@@ -21,16 +20,14 @@ class AISettingsService {
   Future<AISettings> loadSettings() async {
     await initialize();
 
-    final jsonString =
-        _preferences!.getString(_storageKey);
+    final jsonString = _preferences!.getString(_storageKey);
 
     if (jsonString == null || jsonString.isEmpty) {
       return AISettings.defaults;
     }
 
     try {
-      final json =
-          jsonDecode(jsonString) as Map<String, dynamic>;
+      final json = jsonDecode(jsonString) as Map<String, dynamic>;
 
       return AISettings.fromJson(json);
     } catch (_) {
@@ -38,18 +35,12 @@ class AISettingsService {
     }
   }
 
-  Future<void> saveSettings(
-    AISettings settings,
-  ) async {
+  Future<void> saveSettings(AISettings settings) async {
     await initialize();
 
-    final jsonString =
-        jsonEncode(settings.toJson());
+    final jsonString = jsonEncode(settings.toJson());
 
-    await _preferences!.setString(
-      _storageKey,
-      jsonString,
-    );
+    await _preferences!.setString(_storageKey, jsonString);
   }
 
   Future<void> reset() async {

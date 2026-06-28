@@ -23,29 +23,18 @@ class SqliteChatRepository implements ChatRepository {
       return [];
     }
 
-    final List<dynamic> decoded =
-        jsonDecode(jsonString) as List<dynamic>;
+    final List<dynamic> decoded = jsonDecode(jsonString) as List<dynamic>;
 
-    return decoded
-        .cast<Map<String, dynamic>>()
-        .map(Chat.fromMap)
-        .toList();
+    return decoded.cast<Map<String, dynamic>>().map(Chat.fromMap).toList();
   }
 
   @override
-  Future<void> saveChats(
-    List<Chat> chats,
-  ) async {
+  Future<void> saveChats(List<Chat> chats) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final json = chats
-        .map((chat) => chat.toMap())
-        .toList();
+    final json = chats.map((chat) => chat.toMap()).toList();
 
-    await prefs.setString(
-      _storageKey,
-      jsonEncode(json),
-    );
+    await prefs.setString(_storageKey, jsonEncode(json));
   }
 
   @override

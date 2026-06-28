@@ -6,35 +6,20 @@ class DeleteChatDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      icon: const Icon(
-        Icons.delete_outline,
-        color: Colors.red,
-      ),
-      title: const Text(
-        'Delete Conversation',
-      ),
-      content: const Text(
-        'This conversation will be permanently removed.',
-      ),
+      icon: const Icon(Icons.delete_outline, color: Colors.red),
+      title: const Text('Delete Conversation'),
+      content: const Text('This conversation will be permanently removed.'),
       actions: [
         TextButton(
           onPressed: () {
-            Navigator.pop(
-              context,
-              false,
-            );
+            Navigator.pop(context, false);
           },
           child: const Text('Cancel'),
         ),
         FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: Colors.red,
-          ),
+          style: FilledButton.styleFrom(backgroundColor: Colors.red),
           onPressed: () {
-            Navigator.pop(
-              context,
-              true,
-            );
+            Navigator.pop(context, true);
           },
           child: const Text('Delete'),
         ),

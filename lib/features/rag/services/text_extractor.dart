@@ -11,12 +11,8 @@ abstract class TextExtractor {
   const TextExtractor();
 
   /// Whether this extractor supports the document.
-  bool supports(
-    Document document,
-  );
+  bool supports(Document document);
 
   /// Extracts plain text from the document.
-  Future<String> extract(
-    Document document,
-  );
+  Future<String> extract(Document document);
 }

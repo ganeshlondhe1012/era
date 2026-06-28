@@ -20,32 +20,26 @@ import '../services/prompt_builder.dart';
 import '../services/chat_export_service.dart';
 
 class ChatController extends ChangeNotifier {
-ChatController({
-  required AIProvider provider,
-}) : _chatService = ChatService(
-        provider: provider,
-      ) {
-  _memoryService = MemoryService(
-    repository: LocalMemoryRepository(),
-  );
+  ChatController({required AIProvider provider})
+    : _chatService = ChatService(provider: provider) {
+    _memoryService = MemoryService(repository: LocalMemoryRepository());
 
-  _chatPipeline = ChatPipeline(
-    chatService: _chatService,
-    memoryExtractor: const MemoryExtractor(),
-    memoryService: _memoryService,
-    promptBuilder: const PromptBuilder(),
-  );
+    _chatPipeline = ChatPipeline(
+      chatService: _chatService,
+      memoryExtractor: const MemoryExtractor(),
+      memoryService: _memoryService,
+      promptBuilder: const PromptBuilder(),
+    );
 
-  initialize();
-}
+    initialize();
+  }
 
   final ChatService _chatService;
   late final MemoryService _memoryService;
 
-late final ChatPipeline _chatPipeline;
+  late final ChatPipeline _chatPipeline;
 
-  final GenerationController _generationController =
-    GenerationController();
+  final GenerationController _generationController = GenerationController();
 
   final ChatRepository _repository = SqliteChatRepository();
 
@@ -58,41 +52,35 @@ late final ChatPipeline _chatPipeline;
     ),
   ];
 
-
-  
   List<String> _availableModels = [];
 
-String? _selectedModel;
+  String? _selectedModel;
 
-List<String> get availableModels =>
-    List.unmodifiable(_availableModels);
+  List<String> get availableModels => List.unmodifiable(_availableModels);
 
-String? get selectedModel => _selectedModel;
+  String? get selectedModel => _selectedModel;
 
-bool get hasModels => _availableModels.isNotEmpty;
+  bool get hasModels => _availableModels.isNotEmpty;
 
   int _currentChatIndex = 0;
 
- GenerationState _generationState =
-    GenerationState.idle;
+  GenerationState _generationState = GenerationState.idle;
 
   List<Chat> get chats => List.unmodifiable(_chats);
 
-  GenerationController get generationController =>
-    _generationController;
+  GenerationController get generationController => _generationController;
 
   List<Chat> get filteredChats {
-  if (_searchQuery.trim().isEmpty) {
-    return List.unmodifiable(_chats);
+    if (_searchQuery.trim().isEmpty) {
+      return List.unmodifiable(_chats);
+    }
+
+    final query = _searchQuery.toLowerCase();
+
+    return _chats.where((chat) {
+      return chat.title.toLowerCase().contains(query);
+    }).toList();
   }
-
-  final query = _searchQuery.toLowerCase();
-
-  return _chats.where((chat) {
-    return chat.title.toLowerCase().contains(query);
-  }).toList();
-}
-
 
   int get currentChatIndex => _currentChatIndex;
 
@@ -102,11 +90,9 @@ bool get hasModels => _availableModels.isNotEmpty;
 
   bool get hasMessages => messages.isNotEmpty;
 
-  GenerationState get generationState =>
-    _generationState;
+  GenerationState get generationState => _generationState;
 
-  bool get isGenerating =>
-    _generationState.isGenerating;
+  bool get isGenerating => _generationState.isGenerating;
 
   String _searchQuery = '';
 
@@ -116,48 +102,48 @@ bool get hasModels => _availableModels.isNotEmpty;
     return _chatService.isReady();
   }
 
-Future<void> _saveChats() async {
-  try {
-    await _repository.saveChats(_chats);
-  } catch (_) {
-    // Ignore persistence errors for now.
+  Future<void> _saveChats() async {
+    try {
+      await _repository.saveChats(_chats);
+    } catch (_) {
+      // Ignore persistence errors for now.
+    }
   }
-}
 
-Future<void> initialize() async {
-  _availableModels = [];
-  _selectedModel = null;
+  Future<void> initialize() async {
+    _availableModels = [];
+    _selectedModel = null;
 
-  try {
-    final savedChats = await _repository.loadChats();
+    try {
+      final savedChats = await _repository.loadChats();
 
-    if (savedChats.isNotEmpty) {
-      _chats
-        ..clear()
-        ..addAll(savedChats);
+      if (savedChats.isNotEmpty) {
+        _chats
+          ..clear()
+          ..addAll(savedChats);
         _sortChats();
 
-      if (_currentChatIndex >= _chats.length) {
-        _currentChatIndex = 0;
+        if (_currentChatIndex >= _chats.length) {
+          _currentChatIndex = 0;
+        }
       }
+    } catch (_) {
+      // Ignore persistence errors for now.
     }
-  } catch (_) {
-    // Ignore persistence errors for now.
-  }
 
-  await _memoryService.initialize();
+    await _memoryService.initialize();
 
-  final connected = await _chatService.isReady();
+    final connected = await _chatService.isReady();
 
-  if (!connected) {
+    if (!connected) {
+      notifyListeners();
+      return;
+    }
+
+    await refreshModels();
+
     notifyListeners();
-    return;
   }
-
-  await refreshModels();
-
-  notifyListeners();
-}
 
   void switchChat(int index) {
     if (index == _currentChatIndex) return;
@@ -167,11 +153,10 @@ Future<void> initialize() async {
     notifyListeners();
   }
 
- Future<void> createNewChat() async {
-   if (currentChat.messages.isEmpty &&
-    currentChat.title == 'New Chat') {
-  return;
-}
+  Future<void> createNewChat() async {
+    if (currentChat.messages.isEmpty && currentChat.title == 'New Chat') {
+      return;
+    }
     _chats.add(
       Chat(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -181,40 +166,38 @@ Future<void> initialize() async {
       ),
     );
 
-   _currentChatIndex = _chats.length - 1;
+    _currentChatIndex = _chats.length - 1;
 
     await _saveChats();
-    
+
     _sortChats();
     notifyListeners();
   }
 
+  Future<void> refreshModels() async {
+    try {
+      final models = await _chatService.getInstalledModels();
 
-Future<void> refreshModels() async {
-  try {
-    final models = await _chatService.getInstalledModels();
+      _availableModels = models;
 
-    _availableModels = models;
-
-    if (_availableModels.isNotEmpty) {
-      _selectedModel ??= _availableModels.first;
+      if (_availableModels.isNotEmpty) {
+        _selectedModel ??= _availableModels.first;
+      }
+    } catch (_) {
+      _availableModels = [];
+      _selectedModel = null;
     }
-  } catch (_) {
-    _availableModels = [];
-    _selectedModel = null;
+
+    notifyListeners();
   }
 
-  notifyListeners();
-}
+  void selectModel(String model) {
+    if (_selectedModel == model) return;
 
-void selectModel(String model) {
-  if (_selectedModel == model) return;
+    _selectedModel = model;
 
-  _selectedModel = model;
-
-  notifyListeners();
-}
-
+    notifyListeners();
+  }
 
   Future<void> sendMessage(String text) async {
     if (_generationState.isGenerating) return;
@@ -238,49 +221,47 @@ void selectModel(String model) {
         createdAt: DateTime.now(),
       ),
     );
-    
+
     _generationController.reset();
 
     _generationState = GenerationState.generating;
     notifyListeners();
 
-  try {
-  if (_selectedModel == null) {
-    throw Exception(
-      'No Ollama model selected.',
-    );
-  }
+    try {
+      if (_selectedModel == null) {
+        throw Exception('No Ollama model selected.');
+      }
 
-  final assistantMessage = Message(
-    id: DateTime.now().microsecondsSinceEpoch.toString(),
-    text: '',
-    isUser: false,
-    createdAt: DateTime.now(),
-  );
+      final assistantMessage = Message(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        text: '',
+        isUser: false,
+        createdAt: DateTime.now(),
+      );
 
-  _appendMessage(assistantMessage);
+      _appendMessage(assistantMessage);
 
-  var buffer = '';
+      var buffer = '';
 
-  await for (final chunk in _chatService.streamPrompt(
-    prompt: finalPrompt,
-    model: _selectedModel!,
-  )) {
-    if (_generationController.isCancelled) {
-  _generationState = GenerationState.cancelled;
-  break;
-}
+      await for (final chunk in _chatService.streamPrompt(
+        prompt: finalPrompt,
+        model: _selectedModel!,
+      )) {
+        if (_generationController.isCancelled) {
+          _generationState = GenerationState.cancelled;
+          break;
+        }
 
-    if (chunk.isDone) {
-      break;
-    }
+        if (chunk.isDone) {
+          break;
+        }
 
-    buffer += chunk.text;
+        buffer += chunk.text;
 
-    _updateLastMessage(buffer);
-    }
- } catch (e) {
-  _generationState = GenerationState.error;
+        _updateLastMessage(buffer);
+      }
+    } catch (e) {
+      _generationState = GenerationState.error;
       _appendMessage(
         Message(
           id: DateTime.now().microsecondsSinceEpoch.toString(),
@@ -289,270 +270,232 @@ void selectModel(String model) {
           createdAt: DateTime.now(),
         ),
       );
-   } finally {
-        if (_generationState !=
-            GenerationState.error) {
-          _generationState =
-              GenerationState.completed;
-        }
-
-        await _saveChats();
-
-        notifyListeners();
-
-        _generationState = GenerationState.idle;
+    } finally {
+      if (_generationState != GenerationState.error) {
+        _generationState = GenerationState.completed;
       }
-  }
-
-  // duplicate chat
-  Future<void> duplicateChat(String chatId) async {
-  final index = _chats.indexWhere(
-    (chat) => chat.id == chatId,
-  );
-
-  if (index == -1) return;
-
-  final original = _chats[index];
-
-  final duplicate = original.copyWith(
-    id: DateTime.now()
-        .microsecondsSinceEpoch
-        .toString(),
-    title: '${original.title} (Copy)',
-    createdAt: DateTime.now(),
-    messages: List<Message>.from(
-      original.messages.map(
-        (message) => message.copyWith(),
-      ),
-    ),
-  );
-
-  _chats.insert(index + 1, duplicate);
-
-  _currentChatIndex = index + 1;
-
-  _sortChats();
-
-  await _saveChats();
-
-  notifyListeners();
-}
-  //togglepin chat
-  Future<void> togglePin(String chatId) async {
-  final index = _chats.indexWhere(
-    (chat) => chat.id == chatId,
-  );
-
-  if (index == -1) return;
-
-  final chat = _chats[index];
-
-  _chats[index] = chat.copyWith(
-    isPinned: !chat.isPinned,
-  );
-
-  _sortChats();
-
-  await _saveChats();
-
-  notifyListeners();
-}
-
- void _sortChats() {
-  _chats.sort((a, b) {
-    if (a.isPinned != b.isPinned) {
-      return a.isPinned ? -1 : 1;
-    }
-
-    return b.createdAt.compareTo(a.createdAt);
-  });
-}
- Future<void> clearCurrentChat() async {
-      _generationController.reset();
-
-      _replaceCurrentChat(
-        currentChat.copyWith(
-          messages: const [],
-        ),
-      );
 
       await _saveChats();
 
       notifyListeners();
-}
 
-  //stop generation if it's in progress
-  void stopGeneration() {
-  if (!_generationState.isGenerating) {
-    return;
+      _generationState = GenerationState.idle;
+    }
   }
 
-  _generationController.cancel();
+  // duplicate chat
+  Future<void> duplicateChat(String chatId) async {
+    final index = _chats.indexWhere((chat) => chat.id == chatId);
 
-  notifyListeners();
-}
-  //search chats by title
-  void searchChats(String query) {
-  _searchQuery = query;
-  notifyListeners();
-}
+    if (index == -1) return;
 
-  Future<void> renameCurrentChat(String title) async {
-  final newTitle = title.trim();
+    final original = _chats[index];
 
-  if (newTitle.isEmpty) {
-    return;
-  }
-
-  _replaceCurrentChat(
-    currentChat.copyWith(
-      title: newTitle,
-    ),
-  );
-
-  await _saveChats();
-
-  notifyListeners();
-}
-
- void _generateChatTitle(String firstPrompt) {
-  if (currentChat.title != 'New Chat') {
-    return;
-  }
-
-  final cleaned = firstPrompt.trim();
-
-  if (cleaned.isEmpty) {
-    return;
-  }
-
-  String title = cleaned;
-
-  // Remove line breaks.
-  title = title.replaceAll('\n', ' ');
-
-  // Collapse multiple spaces.
-  title = title.replaceAll(RegExp(r'\s+'), ' ');
-
-  // Limit title length.
-  if (title.length > 40) {
-    title = '${title.substring(0, 40).trim()}...';
-  }
-
-  _replaceCurrentChat(
-    currentChat.copyWith(
-      title: title,
-    ),
-  );
-}
-
-  int get totalMessages {
-  return _chats.fold(
-    0,
-    (total, chat) => total + chat.messages.length,
-  );
-}
-
-  Future<void> clearAllChats() async {
-  _chats
-    ..clear()
-    ..add(
-      Chat(
-        id: DateTime.now()
-            .millisecondsSinceEpoch
-            .toString(),
-        title: 'New Chat',
-        createdAt: DateTime.now(),
-        messages: const [],
+    final duplicate = original.copyWith(
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      title: '${original.title} (Copy)',
+      createdAt: DateTime.now(),
+      messages: List<Message>.from(
+        original.messages.map((message) => message.copyWith()),
       ),
     );
 
-  _currentChatIndex = 0;
+    _chats.insert(index + 1, duplicate);
 
-  await _saveChats();
+    _currentChatIndex = index + 1;
 
-  notifyListeners();
-}
+    _sortChats();
+
+    await _saveChats();
+
+    notifyListeners();
+  }
+
+  //togglepin chat
+  Future<void> togglePin(String chatId) async {
+    final index = _chats.indexWhere((chat) => chat.id == chatId);
+
+    if (index == -1) return;
+
+    final chat = _chats[index];
+
+    _chats[index] = chat.copyWith(isPinned: !chat.isPinned);
+
+    _sortChats();
+
+    await _saveChats();
+
+    notifyListeners();
+  }
+
+  void _sortChats() {
+    _chats.sort((a, b) {
+      if (a.isPinned != b.isPinned) {
+        return a.isPinned ? -1 : 1;
+      }
+
+      return b.createdAt.compareTo(a.createdAt);
+    });
+  }
+
+  Future<void> clearCurrentChat() async {
+    _generationController.reset();
+
+    _replaceCurrentChat(currentChat.copyWith(messages: const []));
+
+    await _saveChats();
+
+    notifyListeners();
+  }
+
+  //stop generation if it's in progress
+  void stopGeneration() {
+    if (!_generationState.isGenerating) {
+      return;
+    }
+
+    _generationController.cancel();
+
+    notifyListeners();
+  }
+
+  //search chats by title
+  void searchChats(String query) {
+    _searchQuery = query;
+    notifyListeners();
+  }
+
+  Future<void> renameCurrentChat(String title) async {
+    final newTitle = title.trim();
+
+    if (newTitle.isEmpty) {
+      return;
+    }
+
+    _replaceCurrentChat(currentChat.copyWith(title: newTitle));
+
+    await _saveChats();
+
+    notifyListeners();
+  }
+
+  void _generateChatTitle(String firstPrompt) {
+    if (currentChat.title != 'New Chat') {
+      return;
+    }
+
+    final cleaned = firstPrompt.trim();
+
+    if (cleaned.isEmpty) {
+      return;
+    }
+
+    String title = cleaned;
+
+    // Remove line breaks.
+    title = title.replaceAll('\n', ' ');
+
+    // Collapse multiple spaces.
+    title = title.replaceAll(RegExp(r'\s+'), ' ');
+
+    // Limit title length.
+    if (title.length > 40) {
+      title = '${title.substring(0, 40).trim()}...';
+    }
+
+    _replaceCurrentChat(currentChat.copyWith(title: title));
+  }
+
+  int get totalMessages {
+    return _chats.fold(0, (total, chat) => total + chat.messages.length);
+  }
+
+  Future<void> clearAllChats() async {
+    _chats
+      ..clear()
+      ..add(
+        Chat(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          title: 'New Chat',
+          createdAt: DateTime.now(),
+          messages: const [],
+        ),
+      );
+
+    _currentChatIndex = 0;
+
+    await _saveChats();
+
+    notifyListeners();
+  }
 
   Future<void> exportAllChats() async {
-  const exporter = ChatExportService();
+    const exporter = ChatExportService();
 
-  for (final chat in _chats) {
-    await exporter.exportMarkdown(chat);
+    for (final chat in _chats) {
+      await exporter.exportMarkdown(chat);
+    }
   }
-}
 
   int get totalChats => _chats.length;
 
   String get estimatedStorage {
-  return 'Calculating...';
-}
+    return 'Calculating...';
+  }
 
- Future<void> deleteCurrentChat() async {
-        // Last remaining chat -> reset instead of deleting
-        if (_chats.length == 1) {
-          _chats[0] = Chat(
-            id: DateTime.now()
-                .millisecondsSinceEpoch
-                .toString(),
-            title: 'New Chat',
-            createdAt: DateTime.now(),
-            messages: const [],
-          );
+  Future<void> deleteCurrentChat() async {
+    // Last remaining chat -> reset instead of deleting
+    if (_chats.length == 1) {
+      _chats[0] = Chat(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: 'New Chat',
+        createdAt: DateTime.now(),
+        messages: const [],
+      );
 
-          _currentChatIndex = 0;
+      _currentChatIndex = 0;
 
-          await _saveChats();
+      await _saveChats();
 
-          notifyListeners();
-          return;
-        }
+      notifyListeners();
+      return;
+    }
 
-        _chats.removeAt(_currentChatIndex);
+    _chats.removeAt(_currentChatIndex);
 
-        if (_currentChatIndex >= _chats.length) {
-          _currentChatIndex = _chats.length - 1;
-        }
+    if (_currentChatIndex >= _chats.length) {
+      _currentChatIndex = _chats.length - 1;
+    }
 
-        _sortChats();
+    _sortChats();
 
-        await _saveChats();
+    await _saveChats();
 
-        notifyListeners();
-      }
+    notifyListeners();
+  }
 
   void _appendMessage(Message message) {
     final updatedMessages = List<Message>.from(currentChat.messages)
       ..add(message);
 
-    _replaceCurrentChat(
-      currentChat.copyWith(
-        messages: updatedMessages,
-      ),
-    );
+    _replaceCurrentChat(currentChat.copyWith(messages: updatedMessages));
   }
 
   void _updateLastMessage(String text) {
-  if (currentChat.messages.isEmpty) {
-    return;
+    if (currentChat.messages.isEmpty) {
+      return;
+    }
+
+    final updatedMessages = List<Message>.from(currentChat.messages);
+
+    final last = updatedMessages.last;
+
+    updatedMessages[updatedMessages.length - 1] = last.copyWith(text: text);
+
+    _replaceCurrentChat(currentChat.copyWith(messages: updatedMessages));
+
+    notifyListeners();
   }
-
-  final updatedMessages = List<Message>.from(currentChat.messages);
-
-  final last = updatedMessages.last;
-
-  updatedMessages[updatedMessages.length - 1] = last.copyWith(
-    text: text,
-  );
-
-  _replaceCurrentChat(
-    currentChat.copyWith(
-      messages: updatedMessages,
-    ),
-  );
-
-  notifyListeners();
-}
 
   void _replaceCurrentChat(Chat chat) {
     _chats[_currentChatIndex] = chat;

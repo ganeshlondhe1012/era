@@ -54,8 +54,7 @@ class AIResponse {
     );
   }
 
-  bool get hasTokenUsage =>
-      promptTokens != null || completionTokens != null;
+  bool get hasTokenUsage => promptTokens != null || completionTokens != null;
 
   int? get totalTokens {
     if (promptTokens == null || completionTokens == null) {

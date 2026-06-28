@@ -2,19 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CodeBlock extends StatelessWidget {
-  const CodeBlock({
-    super.key,
-    required this.code,
-    this.language,
-  });
+  const CodeBlock({super.key, required this.code, this.language});
 
   final String code;
   final String? language;
 
   Future<void> _copy(BuildContext context) async {
-    await Clipboard.setData(
-      ClipboardData(text: code),
-    );
+    await Clipboard.setData(ClipboardData(text: code));
 
     if (!context.mounted) return;
 
@@ -33,36 +27,26 @@ class CodeBlock extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 8,
-      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0xFF1E1E1E),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.3)),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
             height: 42,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 14,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: const BoxDecoration(
               color: Color(0xFF2B2B2B),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(14),
-              ),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
             ),
             child: Row(
               children: [
                 Text(
-                  language?.toUpperCase() ??
-                      'CODE',
+                  language?.toUpperCase() ?? 'CODE',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -75,10 +59,7 @@ class CodeBlock extends StatelessWidget {
                 IconButton(
                   tooltip: 'Copy',
                   splashRadius: 18,
-                  icon: const Icon(
-                    Icons.copy_rounded,
-                    size: 18,
-                  ),
+                  icon: const Icon(Icons.copy_rounded, size: 18),
                   onPressed: () => _copy(context),
                 ),
               ],

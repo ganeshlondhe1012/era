@@ -19,9 +19,7 @@ class SettingsNavigation extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         border: Border(
-          right: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          right: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Column(
@@ -33,9 +31,9 @@ class SettingsNavigation extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               'Settings',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
 
@@ -92,8 +90,6 @@ class SettingsNavigation extends StatelessWidget {
 
       case SettingsCategory.chat:
         return Icons.chat_bubble_outline;
-
-     
     }
   }
 }

@@ -13,9 +13,7 @@ class DocumentController extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  Future<void> attach(
-    DocumentAttachment attachment,
-  ) async {
+  Future<void> attach(DocumentAttachment attachment) async {
     _isLoading = true;
     notifyListeners();
 

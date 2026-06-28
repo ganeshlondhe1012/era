@@ -7,25 +7,18 @@ class MarkdownTextExtractor extends TextExtractor {
   const MarkdownTextExtractor();
 
   @override
-  bool supports(
-    Document document,
-  ) {
+  bool supports(Document document) {
     final path = document.path.toLowerCase();
 
-    return path.endsWith('.md') ||
-        path.endsWith('.markdown');
+    return path.endsWith('.md') || path.endsWith('.markdown');
   }
 
   @override
-  Future<String> extract(
-    Document document,
-  ) async {
+  Future<String> extract(Document document) async {
     final file = File(document.path);
 
     if (!await file.exists()) {
-      throw Exception(
-        'Markdown file not found: ${document.path}',
-      );
+      throw Exception('Markdown file not found: ${document.path}');
     }
 
     final text = await file.readAsString();
@@ -33,12 +26,7 @@ class MarkdownTextExtractor extends TextExtractor {
     return _normalize(text);
   }
 
-  String _normalize(
-    String markdown,
-  ) {
-    return markdown
-        .replaceAll('\r\n', '\n')
-        .replaceAll('\r', '\n')
-        .trim();
+  String _normalize(String markdown) {
+    return markdown.replaceAll('\r\n', '\n').replaceAll('\r', '\n').trim();
   }
 }

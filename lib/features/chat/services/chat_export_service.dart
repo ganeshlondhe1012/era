@@ -14,18 +14,14 @@ class ChatExportService {
         .replaceAll(RegExp(r'[\\/:*?"<>|]'), '_')
         .trim();
 
-    final file = File(
-      '${directory.path}/$safeTitle.md',
-    );
+    final file = File('${directory.path}/$safeTitle.md');
 
     final buffer = StringBuffer();
 
     buffer.writeln('# ${chat.title}');
     buffer.writeln();
 
-    buffer.writeln(
-      'Created: ${chat.createdAt}',
-    );
+    buffer.writeln('Created: ${chat.createdAt}');
 
     buffer.writeln();
 
@@ -33,11 +29,7 @@ class ChatExportService {
     buffer.writeln();
 
     for (final message in chat.messages) {
-      buffer.writeln(
-        message.isUser
-            ? '## You'
-            : '## Era',
-      );
+      buffer.writeln(message.isUser ? '## You' : '## Era');
 
       buffer.writeln();
 
@@ -46,9 +38,7 @@ class ChatExportService {
       buffer.writeln();
     }
 
-    await file.writeAsString(
-      buffer.toString(),
-    );
+    await file.writeAsString(buffer.toString());
 
     return file;
   }

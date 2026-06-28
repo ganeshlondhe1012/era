@@ -17,10 +17,7 @@ class ChunkingService {
       return [];
     }
 
-    assert(
-      chunkSize > overlap,
-      'chunkSize must be greater than overlap.',
-    );
+    assert(chunkSize > overlap, 'chunkSize must be greater than overlap.');
 
     final chunks = <DocumentChunk>[];
 
@@ -28,18 +25,14 @@ class ChunkingService {
     int index = 0;
 
     while (start < text.length) {
-      final end =
-          (start + chunkSize).clamp(0, text.length);
+      final end = (start + chunkSize).clamp(0, text.length);
 
-      final content = text
-          .substring(start, end)
-          .trim();
+      final content = text.substring(start, end).trim();
 
       if (content.isNotEmpty) {
         chunks.add(
           DocumentChunk(
-            id:
-                '${document.id}_$index',
+            id: '${document.id}_$index',
             documentId: document.id,
             index: index,
             content: content,

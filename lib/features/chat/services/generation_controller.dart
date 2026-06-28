@@ -19,8 +19,7 @@ class GenerationController {
       StreamController<void>.broadcast();
 
   /// Emits once when generation is cancelled.
-  Stream<void> get onCancel =>
-      _cancelController.stream;
+  Stream<void> get onCancel => _cancelController.stream;
 
   bool get isCancelled => _cancelled;
 

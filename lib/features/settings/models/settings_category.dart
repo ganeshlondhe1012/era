@@ -1,8 +1,4 @@
-enum SettingsCategory {
-  appearance,
-  ai,
-  chat
-}
+enum SettingsCategory { appearance, ai, chat }
 
 extension SettingsCategoryExtension on SettingsCategory {
   String get title {
@@ -15,10 +11,6 @@ extension SettingsCategoryExtension on SettingsCategory {
 
       case SettingsCategory.chat:
         return 'Chat';
-
-     
-
-      
     }
   }
 
@@ -32,8 +24,6 @@ extension SettingsCategoryExtension on SettingsCategory {
 
       case SettingsCategory.chat:
         return 'Chat experience';
-
-     
     }
   }
 }

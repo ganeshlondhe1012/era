@@ -20,26 +20,16 @@ class LocalMemoryRepository implements MemoryRepository {
 
     final List<dynamic> decoded = jsonDecode(json);
 
-    return decoded
-        .cast<Map<String, dynamic>>()
-        .map(Memory.fromMap)
-        .toList();
+    return decoded.cast<Map<String, dynamic>>().map(Memory.fromMap).toList();
   }
 
   @override
-  Future<void> save(
-    List<Memory> memories,
-  ) async {
+  Future<void> save(List<Memory> memories) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final json = memories
-        .map((memory) => memory.toMap())
-        .toList();
+    final json = memories.map((memory) => memory.toMap()).toList();
 
-    await prefs.setString(
-      _storageKey,
-      jsonEncode(json),
-    );
+    await prefs.setString(_storageKey, jsonEncode(json));
   }
 
   @override

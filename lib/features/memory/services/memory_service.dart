@@ -2,9 +2,7 @@ import '../models/memory.dart';
 import '../repository/local_repository.dart';
 
 class MemoryService {
-  MemoryService({
-    required this._repository,
-  });
+  MemoryService({required this._repository});
 
   final LocalMemoryRepository _repository;
 
@@ -18,23 +16,16 @@ class MemoryService {
       ..addAll(await _repository.load());
   }
 
-  Future<void> addMemory({
-    required String key,
-    required String value,
-  }) async {
-    final existingIndex = _memories.indexWhere(
-      (m) => m.key == key,
-    );
+  Future<void> addMemory({required String key, required String value}) async {
+    final existingIndex = _memories.indexWhere((m) => m.key == key);
 
     final memory = Memory(
-  id: DateTime.now()
-      .microsecondsSinceEpoch
-      .toString(),
-  key: key,
-  value: value,
-  createdAt: DateTime.now(),
-  updatedAt: DateTime.now(),
-);
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      key: key,
+      value: value,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
     if (existingIndex == -1) {
       _memories.add(memory);
@@ -45,13 +36,9 @@ class MemoryService {
     await _repository.save(_memories);
   }
 
-  Future<void> addMemories(
-    Iterable<Memory> memories,
-  ) async {
+  Future<void> addMemories(Iterable<Memory> memories) async {
     for (final memory in memories) {
-      final existingIndex = _memories.indexWhere(
-        (m) => m.key == memory.key,
-      );
+      final existingIndex = _memories.indexWhere((m) => m.key == memory.key);
 
       if (existingIndex == -1) {
         _memories.add(memory);
@@ -77,9 +64,7 @@ class MemoryService {
 
   Memory? findMemory(String key) {
     try {
-      return _memories.firstWhere(
-        (m) => m.key == key,
-      );
+      return _memories.firstWhere((m) => m.key == key);
     } catch (_) {
       return null;
     }

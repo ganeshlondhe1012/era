@@ -22,17 +22,13 @@ class AttachedDocumentCard extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
-            const Icon(
-              Icons.description_outlined,
-              size: 32,
-            ),
+            const Icon(Icons.description_outlined, size: 32),
 
             const SizedBox(width: 14),
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     document.name,

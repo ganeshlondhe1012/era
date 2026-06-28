@@ -5,9 +5,7 @@ import '../widgets/prompt_input.dart';
 import '../widgets/sidebar.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({
-    super.key,
-  });
+  const HomeScreen({super.key});
 
   static const double _sidebarWidth = 280;
 
@@ -20,29 +18,18 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Row(
           children: [
-            const SizedBox(
-              width: _sidebarWidth,
-              child: Sidebar(),
-            ),
+            const SizedBox(width: _sidebarWidth, child: Sidebar()),
 
-            VerticalDivider(
-              width: 1,
-              thickness: 1,
-              color: theme.dividerColor,
-            ),
+            VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
 
             Expanded(
               child: Container(
                 color: theme.colorScheme.surfaceContainerLowest,
                 child: const Column(
                   children: [
-                    Expanded(
-                      child: ChatArea(),
-                    ),
+                    Expanded(child: ChatArea()),
 
-                    Divider(
-                      height: 1,
-                    ),
+                    Divider(height: 1),
 
                     PromptInput(),
                   ],

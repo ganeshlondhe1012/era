@@ -73,11 +73,6 @@ class Message {
 
   @override
   int get hashCode {
-    return Object.hash(
-      id,
-      text,
-      isUser,
-      createdAt,
-    );
+    return Object.hash(id, text, isUser, createdAt);
   }
 }

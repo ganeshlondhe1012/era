@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import '../controllers/ai_settings_controller.dart';
 
 class ModelDropdown extends StatelessWidget {
-  const ModelDropdown({
-    super.key,
-  });
+  const ModelDropdown({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +42,7 @@ class ModelDropdown extends StatelessWidget {
                       items: models.map((model) {
                         return DropdownMenuItem<String>(
                           value: model,
-                          child: Text(
-                            model,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                          child: Text(model, overflow: TextOverflow.ellipsis),
                         );
                       }).toList(),
                     )

@@ -34,8 +34,7 @@ class ChatResponse {
       completed: completed ?? this.completed,
       error: error ?? this.error,
       tokens: tokens ?? this.tokens,
-      generationTime:
-          generationTime ?? this.generationTime,
+      generationTime: generationTime ?? this.generationTime,
     );
   }
 }

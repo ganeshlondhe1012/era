@@ -4,9 +4,8 @@ import '../models/app_settings.dart';
 import '../services/settings_service.dart';
 
 class SettingsController extends ChangeNotifier {
-  SettingsController({
-    SettingsService? service,
-  }) : _service = service ?? SettingsService.instance;
+  SettingsController({SettingsService? service})
+    : _service = service ?? SettingsService.instance;
 
   final SettingsService _service;
 
@@ -38,14 +37,10 @@ class SettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setThemeMode(
-    AppThemeMode mode,
-  ) async {
+  Future<void> setThemeMode(AppThemeMode mode) async {
     if (_settings.themeMode == mode) return;
 
-    _settings = _settings.copyWith(
-      themeMode: mode,
-    );
+    _settings = _settings.copyWith(themeMode: mode);
 
     notifyListeners();
 

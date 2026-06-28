@@ -3,9 +3,7 @@ import '../../chat/services/chat_service.dart';
 import '../models/document_chunk.dart';
 
 class RagChatService {
-  RagChatService({
-    required this._chatService,
-  });
+  RagChatService({required this._chatService});
 
   final ChatService _chatService;
 
@@ -15,9 +13,7 @@ class RagChatService {
   }) async {
     final buffer = StringBuffer();
 
-    buffer.writeln(
-      'Answer the question using ONLY the information below.',
-    );
+    buffer.writeln('Answer the question using ONLY the information below.');
 
     buffer.writeln();
 
@@ -42,14 +38,8 @@ class RagChatService {
     required String question,
     required List<DocumentChunk> chunks,
   }) async* {
-    final prompt = await buildPrompt(
-      question: question,
-      chunks: chunks,
-    );
+    final prompt = await buildPrompt(question: question, chunks: chunks);
 
-    yield* _chatService.streamPrompt(
-      prompt: prompt,
-      model: model,
-    );
+    yield* _chatService.streamPrompt(prompt: prompt, model: model);
   }
 }

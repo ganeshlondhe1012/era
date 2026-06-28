@@ -17,23 +17,18 @@ class DocumentController extends ChangeNotifier {
 
   bool get isImporting => _isImporting;
 
-  List<Document> get documents =>
-      _documentService.documents;
+  List<Document> get documents => _documentService.documents;
 
-  int get documentCount =>
-      _documentService.count;
+  int get documentCount => _documentService.count;
 
-  bool get hasDocuments =>
-      _documentService.isNotEmpty;
+  bool get hasDocuments => _documentService.isNotEmpty;
 
   Future<void> initialize() async {
     await _documentService.initialize();
     notifyListeners();
   }
 
-  Future<void> importDocument(
-    Document document,
-  ) async {
+  Future<void> importDocument(Document document) async {
     if (_isImporting) {
       return;
     }
@@ -42,18 +37,14 @@ class DocumentController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _importService.importDocument(
-        document,
-      );
+      await _importService.importDocument(document);
     } finally {
       _isImporting = false;
       notifyListeners();
     }
   }
 
-  Future<void> deleteDocument(
-    String id,
-  ) async {
+  Future<void> deleteDocument(String id) async {
     await _documentService.removeDocument(id);
     notifyListeners();
   }
@@ -63,9 +54,7 @@ class DocumentController extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Document> search(
-    String query,
-  ) {
+  List<Document> search(String query) {
     return _documentService.search(query);
   }
 }

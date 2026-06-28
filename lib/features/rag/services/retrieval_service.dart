@@ -23,14 +23,8 @@ class RetrievalService {
       content: query,
     );
 
-    final embedding =
-        await _embeddingProvider.embedChunk(
-      queryChunk,
-    );
+    final embedding = await _embeddingProvider.embedChunk(queryChunk);
 
-    return _vectorStore.search(
-      queryVector: embedding.vector,
-      limit: limit,
-    );
+    return _vectorStore.search(queryVector: embedding.vector, limit: limit);
   }
 }

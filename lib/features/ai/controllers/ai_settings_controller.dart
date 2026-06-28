@@ -10,10 +10,8 @@ class AISettingsController extends ChangeNotifier {
   AISettingsController({
     AISettingsService? settingsService,
     OllamaService? ollamaService,
-  })  : _settingsService =
-            settingsService ?? AISettingsService.instance,
-        _ollamaService =
-            ollamaService ?? OllamaService();
+  }) : _settingsService = settingsService ?? AISettingsService.instance,
+       _ollamaService = ollamaService ?? OllamaService();
 
   final AISettingsService _settingsService;
   final OllamaService _ollamaService;
@@ -36,8 +34,7 @@ class AISettingsController extends ChangeNotifier {
 
   bool get providerAvailable => _providerAvailable;
 
-  List<String> get availableModels =>
-      List.unmodifiable(_availableModels);
+  List<String> get availableModels => List.unmodifiable(_availableModels);
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -59,18 +56,13 @@ class AISettingsController extends ChangeNotifier {
     try {
       switch (_settings.provider) {
         case AIProvider.ollama:
-          _providerAvailable =
-              await _ollamaService.isAvailable();
+          _providerAvailable = await _ollamaService.isAvailable();
 
           if (_providerAvailable) {
-            _availableModels =
-                await _ollamaService.getInstalledModels();
+            _availableModels = await _ollamaService.getInstalledModels();
 
-            if (_settings.model.isEmpty &&
-                _availableModels.isNotEmpty) {
-              _settings = _settings.copyWith(
-                model: _availableModels.first,
-              );
+            if (_settings.model.isEmpty && _availableModels.isNotEmpty) {
+              _settings = _settings.copyWith(model: _availableModels.first);
             }
           } else {
             _availableModels = [];
@@ -90,79 +82,48 @@ class AISettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setProvider(
-    AIProvider provider,
-  ) async {
+  Future<void> setProvider(AIProvider provider) async {
     if (_settings.provider == provider) return;
 
-    _settings = _settings.copyWith(
-      provider: provider,
-      model: '',
-    );
+    _settings = _settings.copyWith(provider: provider, model: '');
 
-    await _settingsService.saveSettings(
-      _settings,
-    );
+    await _settingsService.saveSettings(_settings);
 
     await refreshModels();
 
     notifyListeners();
   }
 
-  Future<void> setModel(
-    String model,
-  ) async {
+  Future<void> setModel(String model) async {
     if (_settings.model == model) return;
 
-    _settings = _settings.copyWith(
-      model: model,
-    );
+    _settings = _settings.copyWith(model: model);
 
-    await _settingsService.saveSettings(
-      _settings,
-    );
+    await _settingsService.saveSettings(_settings);
 
     notifyListeners();
   }
 
-  Future<void> setTemperature(
-    double value,
-  ) async {
-    _settings = _settings.copyWith(
-      temperature: value,
-    );
+  Future<void> setTemperature(double value) async {
+    _settings = _settings.copyWith(temperature: value);
 
-    await _settingsService.saveSettings(
-      _settings,
-    );
+    await _settingsService.saveSettings(_settings);
 
     notifyListeners();
   }
 
-  Future<void> setStreaming(
-    bool enabled,
-  ) async {
-    _settings = _settings.copyWith(
-      streaming: enabled,
-    );
+  Future<void> setStreaming(bool enabled) async {
+    _settings = _settings.copyWith(streaming: enabled);
 
-    await _settingsService.saveSettings(
-      _settings,
-    );
+    await _settingsService.saveSettings(_settings);
 
     notifyListeners();
   }
 
-  Future<void> setContextLength(
-    int length,
-  ) async {
-    _settings = _settings.copyWith(
-      contextLength: length,
-    );
+  Future<void> setContextLength(int length) async {
+    _settings = _settings.copyWith(contextLength: length);
 
-    await _settingsService.saveSettings(
-      _settings,
-    );
+    await _settingsService.saveSettings(_settings);
 
     notifyListeners();
   }

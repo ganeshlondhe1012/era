@@ -1,15 +1,11 @@
 import '../../memory/controllers/memory_controller.dart';
 
 class MemoryPromptProvider {
-  const MemoryPromptProvider({
-    required this._memoryController,
-  });
+  const MemoryPromptProvider({required this._memoryController});
 
   final MemoryController _memoryController;
 
-  Map<String, String> getRelevantMemories(
-    String prompt,
-  ) {
+  Map<String, String> getRelevantMemories(String prompt) {
     final Map<String, String> result = {};
 
     // V1:

@@ -19,9 +19,7 @@ import '../models/chat_response.dart';
 /// - UI
 /// - Storage
 class ChatService {
-  const ChatService({
-    required this._provider,
-  });
+  const ChatService({required this._provider});
 
   final AIProvider _provider;
 
@@ -44,16 +42,11 @@ class ChatService {
       throw Exception('Prompt cannot be empty.');
     }
 
-    return _provider.generateResponse(
-      prompt: cleanedPrompt,
-      model: model,
-    );
+    return _provider.generateResponse(prompt: cleanedPrompt, model: model);
   }
 
   /// New pipeline API
-  Future<ChatResponse> send(
-    ChatRequest request,
-  ) async {
+  Future<ChatResponse> send(ChatRequest request) async {
     final response = await sendPrompt(
       prompt: request.prompt,
       model: request.model,
@@ -75,9 +68,7 @@ class ChatService {
     final cleanedPrompt = prompt.trim();
 
     if (cleanedPrompt.isEmpty) {
-      return Stream.error(
-        Exception('Prompt cannot be empty.'),
-      );
+      return Stream.error(Exception('Prompt cannot be empty.'));
     }
 
     return _provider.generateResponseStream(
@@ -87,12 +78,7 @@ class ChatService {
   }
 
   /// New pipeline streaming API
-  Stream<AIResponseChunk> stream(
-    ChatRequest request,
-  ) {
-    return streamPrompt(
-      prompt: request.prompt,
-      model: request.model,
-    );
+  Stream<AIResponseChunk> stream(ChatRequest request) {
+    return streamPrompt(prompt: request.prompt, model: request.model);
   }
 }

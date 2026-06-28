@@ -7,22 +7,16 @@ class ConversationSummarizer {
   ///
   /// V1 is rule-based.
   /// Later this can be replaced with an AI-generated summary.
-  String summarize(
-    List<Message> messages, {
-    int keepLast = 10,
-  }) {
+  String summarize(List<Message> messages, {int keepLast = 10}) {
     if (messages.length <= keepLast) {
       return '';
     }
 
-    final oldMessages =
-        messages.take(messages.length - keepLast);
+    final oldMessages = messages.take(messages.length - keepLast);
 
     final buffer = StringBuffer();
 
-    buffer.writeln(
-      'Summary of previous conversation:',
-    );
+    buffer.writeln('Summary of previous conversation:');
     buffer.writeln();
 
     for (final message in oldMessages) {

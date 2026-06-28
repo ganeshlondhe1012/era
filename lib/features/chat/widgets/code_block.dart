@@ -3,11 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 
 class CodeBlock extends StatelessWidget {
-  const CodeBlock({
-    super.key,
-    required this.code,
-    this.language = 'plaintext',
-  });
+  const CodeBlock({super.key, required this.code, this.language = 'plaintext'});
 
   final String code;
   final String language;
@@ -28,9 +24,7 @@ class CodeBlock extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: const BoxDecoration(
               color: Color(0xFF2D2D2D),
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(12),
-              ),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: Row(
               children: [
@@ -45,15 +39,9 @@ class CodeBlock extends StatelessWidget {
                 const Spacer(),
                 IconButton(
                   tooltip: 'Copy code',
-                  icon: const Icon(
-                    Icons.copy,
-                    size: 18,
-                    color: Colors.white70,
-                  ),
+                  icon: const Icon(Icons.copy, size: 18, color: Colors.white70),
                   onPressed: () async {
-                    await Clipboard.setData(
-                      ClipboardData(text: code),
-                    );
+                    await Clipboard.setData(ClipboardData(text: code));
                   },
                 ),
               ],

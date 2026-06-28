@@ -63,6 +63,5 @@ class Memory {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, key, value, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, key, value, createdAt, updatedAt);
 }

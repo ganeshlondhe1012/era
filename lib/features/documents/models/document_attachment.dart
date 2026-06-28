@@ -28,8 +28,7 @@ class DocumentAttachment {
 
   int get characterCount => text.length;
 
-  int get estimatedTokens =>
-      (text.length / 4).ceil();
+  int get estimatedTokens => (text.length / 4).ceil();
 
   DocumentAttachment copyWith({
     String? id,
@@ -45,8 +44,7 @@ class DocumentAttachment {
       path: path ?? this.path,
       mimeType: mimeType ?? this.mimeType,
       text: text ?? this.text,
-      uploadedAt:
-          uploadedAt ?? this.uploadedAt,
+      uploadedAt: uploadedAt ?? this.uploadedAt,
     );
   }
 }

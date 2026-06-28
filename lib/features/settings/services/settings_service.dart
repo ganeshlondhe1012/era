@@ -39,10 +39,7 @@ class SettingsService {
 
     final jsonString = jsonEncode(settings.toJson());
 
-    await _preferences!.setString(
-      _settingsKey,
-      jsonString,
-    );
+    await _preferences!.setString(_settingsKey, jsonString);
   }
 
   Future<void> reset() async {

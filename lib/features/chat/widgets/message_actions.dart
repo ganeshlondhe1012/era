@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-
 class MessageActions extends StatelessWidget {
-  const MessageActions({
-    super.key,
-    required this.text,
-    this.onRegenerate,
-  });
+  const MessageActions({super.key, required this.text, this.onRegenerate});
 
   final String text;
   final VoidCallback? onRegenerate;
@@ -20,14 +14,9 @@ class MessageActions extends StatelessWidget {
       children: [
         IconButton(
           tooltip: 'Copy',
-          icon: const Icon(
-            Icons.copy_outlined,
-            size: 18,
-          ),
+          icon: const Icon(Icons.copy_outlined, size: 18),
           onPressed: () async {
-            await Clipboard.setData(
-              ClipboardData(text: text),
-            );
+            await Clipboard.setData(ClipboardData(text: text));
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -42,10 +31,7 @@ class MessageActions extends StatelessWidget {
 
         IconButton(
           tooltip: 'Regenerate',
-          icon: const Icon(
-            Icons.refresh,
-            size: 18,
-          ),
+          icon: const Icon(Icons.refresh, size: 18),
           onPressed: onRegenerate,
         ),
       ],

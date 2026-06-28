@@ -3,9 +3,7 @@ import 'context/chat_context.dart';
 class PromptBuilder {
   const PromptBuilder();
 
-  String build(
-    ChatContext context,
-  ) {
+  String build(ChatContext context) {
     final buffer = StringBuffer();
 
     // Future system prompt

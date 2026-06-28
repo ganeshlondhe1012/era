@@ -43,9 +43,7 @@ class DocumentChunk {
     };
   }
 
-  factory DocumentChunk.fromMap(
-    Map<String, dynamic> map,
-  ) {
+  factory DocumentChunk.fromMap(Map<String, dynamic> map) {
     return DocumentChunk(
       id: map['id'] as String,
       documentId: map['documentId'] as String,
@@ -64,11 +62,5 @@ class DocumentChunk {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(
-        id,
-        documentId,
-        index,
-        content,
-      );
+  int get hashCode => Object.hash(id, documentId, index, content);
 }

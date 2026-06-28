@@ -32,14 +32,14 @@ class ChatPipeline {
     String? systemPrompt,
   }) {
     final context = ChatContext(
-  userPrompt: userPrompt,
-  history: history,
-  memories: memories,
-  documents: documents,
-  systemPrompt: systemPrompt,
-);
+      userPrompt: userPrompt,
+      history: history,
+      memories: memories,
+      documents: documents,
+      systemPrompt: systemPrompt,
+    );
 
-return _promptBuilder.build(context);
+    return _promptBuilder.build(context);
   }
 
   ChatService get chatService => _chatService;

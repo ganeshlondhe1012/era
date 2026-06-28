@@ -42,30 +42,25 @@ class OllamaService {
     final response = await _client
         .post(
           _chatUri,
-          headers: const {
-            'Content-Type': 'application/json',
-          },
+          headers: const {'Content-Type': 'application/json'},
           body: jsonEncode({
             'model': model,
             'stream': false,
             'messages': [
-              {
-                'role': 'user',
-                'content': prompt,
-              }
+              {'role': 'user', 'content': prompt},
             ],
           }),
         )
         .timeout(requestTimeout);
 
-   if (response.statusCode != 200) {
-  throw Exception('''
+    if (response.statusCode != 200) {
+      throw Exception('''
 STATUS: ${response.statusCode}
 
 BODY:
 ${response.body}
 ''');
-}
+    }
     final dynamic json = jsonDecode(response.body);
 
     if (json is! Map<String, dynamic>) {
@@ -87,15 +82,12 @@ ${response.body}
     return content.trim();
   }
 
-    /// Streams a response from Ollama incrementally.
+  /// Streams a response from Ollama incrementally.
   Stream<String> generateResponseStream({
     required String prompt,
     required String model,
   }) async* {
-    final request = http.Request(
-      'POST',
-      _chatUri,
-    );
+    final request = http.Request('POST', _chatUri);
 
     request.headers['Content-Type'] = 'application/json';
 
@@ -103,22 +95,16 @@ ${response.body}
       'model': model,
       'stream': true,
       'messages': [
-        {
-          'role': 'user',
-          'content': prompt,
-        }
+        {'role': 'user', 'content': prompt},
       ],
     });
 
-    final response = await _client
-        .send(request)
-        .timeout(requestTimeout);
+    final response = await _client.send(request).timeout(requestTimeout);
 
-   if (response.statusCode != 200) {
-  final errorBody =
-      await response.stream.bytesToString();
+    if (response.statusCode != 200) {
+      final errorBody = await response.stream.bytesToString();
 
-  throw Exception('''
+      throw Exception('''
 ========================
 OLLAMA ERROR
 
@@ -128,10 +114,11 @@ BODY:
 $errorBody
 ========================
 ''');
-}
-    await for (final line in response.stream
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())) {
+    }
+    await for (final line
+        in response.stream
+            .transform(utf8.decoder)
+            .transform(const LineSplitter())) {
       if (line.trim().isEmpty) {
         continue;
       }
@@ -165,9 +152,7 @@ $errorBody
         .timeout(const Duration(seconds: 5));
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'Unable to fetch installed models.',
-      );
+      throw Exception('Unable to fetch installed models.');
     }
 
     final dynamic json = jsonDecode(response.body);

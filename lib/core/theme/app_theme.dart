@@ -33,15 +33,10 @@ class AppTheme {
   }
 
   static ThemeData system(Brightness brightness) {
-    return brightness == Brightness.dark
-        ? dark()
-        : light();
+    return brightness == Brightness.dark ? dark() : light();
   }
 
-  static ThemeData fromMode(
-    AppThemeMode mode,
-    Brightness systemBrightness,
-  ) {
+  static ThemeData fromMode(AppThemeMode mode, Brightness systemBrightness) {
     switch (mode) {
       case AppThemeMode.system:
         return system(systemBrightness);
@@ -99,9 +94,7 @@ class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -115,14 +108,10 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         color: card,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
 
-      listTileTheme: const ListTileThemeData(
-        dense: false,
-      ),
+      listTileTheme: const ListTileThemeData(dense: false),
     );
   }
 }

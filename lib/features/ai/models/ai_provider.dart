@@ -1,11 +1,4 @@
-enum AIProvider {
-  ollama,
-  lmStudio,
-  llamaCpp,
-  openAI,
-  gemini,
-  claude,
-}
+enum AIProvider { ollama, lmStudio, llamaCpp, openAI, gemini, claude }
 
 extension AIProviderExtension on AIProvider {
   String get id {

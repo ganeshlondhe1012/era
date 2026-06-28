@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
 
 class RenameChatDialog extends StatefulWidget {
-  const RenameChatDialog({
-    super.key,
-    required this.initialTitle,
-  });
+  const RenameChatDialog({super.key, required this.initialTitle});
 
   final String initialTitle;
 
   @override
-  State<RenameChatDialog> createState() =>
-      _RenameChatDialogState();
+  State<RenameChatDialog> createState() => _RenameChatDialogState();
 }
 
-class _RenameChatDialogState
-    extends State<RenameChatDialog> {
+class _RenameChatDialogState extends State<RenameChatDialog> {
   late final TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = TextEditingController(
-      text: widget.initialTitle,
-    );
+    _controller = TextEditingController(text: widget.initialTitle);
   }
 
   @override
@@ -39,9 +32,7 @@ class _RenameChatDialogState
       content: TextField(
         controller: _controller,
         autofocus: true,
-        decoration: const InputDecoration(
-          hintText: 'Chat name',
-        ),
+        decoration: const InputDecoration(hintText: 'Chat name'),
       ),
       actions: [
         TextButton(
@@ -52,10 +43,7 @@ class _RenameChatDialogState
         ),
         FilledButton(
           onPressed: () {
-            Navigator.pop(
-              context,
-              _controller.text.trim(),
-            );
+            Navigator.pop(context, _controller.text.trim());
           },
           child: const Text('Rename'),
         ),

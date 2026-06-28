@@ -62,14 +62,10 @@ class AISettingsPanel extends StatelessWidget {
                       min: 0.0,
                       max: 2.0,
                       divisions: 20,
-                      label: controller.settings.temperature
-                          .toStringAsFixed(1),
+                      label: controller.settings.temperature.toStringAsFixed(1),
                       onChanged: controller.setTemperature,
                     ),
-                    Text(
-                      controller.settings.temperature
-                          .toStringAsFixed(1),
-                    ),
+                    Text(controller.settings.temperature.toStringAsFixed(1)),
                   ],
                 ),
               ),
@@ -89,17 +85,12 @@ class AISettingsPanel extends StatelessWidget {
                       min: 1024,
                       max: 32768,
                       divisions: 31,
-                      label:
-                          controller.settings.contextLength.toString(),
+                      label: controller.settings.contextLength.toString(),
                       onChanged: (value) {
-                        controller.setContextLength(
-                          value.round(),
-                        );
+                        controller.setContextLength(value.round());
                       },
                     ),
-                    Text(
-                      '${controller.settings.contextLength} tokens',
-                    ),
+                    Text('${controller.settings.contextLength} tokens'),
                   ],
                 ),
               ),
@@ -119,9 +110,7 @@ class AISettingsPanel extends StatelessWidget {
                 ),
                 title: const Text('Provider Status'),
                 subtitle: Text(
-                  controller.providerAvailable
-                      ? 'Connected'
-                      : 'Disconnected',
+                  controller.providerAvailable ? 'Connected' : 'Disconnected',
                 ),
                 trailing: FilledButton.icon(
                   onPressed: controller.refreshModels,

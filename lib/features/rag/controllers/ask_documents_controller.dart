@@ -4,9 +4,7 @@ import '../models/document_chunk.dart';
 import '../services/rag_pipeline.dart';
 
 class AskDocumentsController extends ChangeNotifier {
-  AskDocumentsController({
-    required this._ragPipeline,
-  });
+  AskDocumentsController({required this._ragPipeline});
 
   final RagPipeline _ragPipeline;
 
@@ -19,9 +17,7 @@ class AskDocumentsController extends ChangeNotifier {
   List<DocumentChunk> get retrievedChunks =>
       List.unmodifiable(_retrievedChunks);
 
-  Future<void> search(
-    String query,
-  ) async {
+  Future<void> search(String query) async {
     final trimmed = query.trim();
 
     if (trimmed.isEmpty) {
@@ -32,11 +28,7 @@ class AskDocumentsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _retrievedChunks =
-          await _ragPipeline.retrieve(
-        trimmed,
-        limit: 5,
-      );
+      _retrievedChunks = await _ragPipeline.retrieve(trimmed, limit: 5);
     } finally {
       _isSearching = false;
       notifyListeners();

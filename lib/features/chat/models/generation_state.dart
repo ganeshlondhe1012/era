@@ -1,10 +1,4 @@
-enum GenerationState {
-  idle,
-  generating,
-  cancelled,
-  completed,
-  error,
-}
+enum GenerationState { idle, generating, cancelled, completed, error }
 
 extension GenerationStateX on GenerationState {
   bool get isGenerating => this == GenerationState.generating;

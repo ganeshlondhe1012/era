@@ -20,19 +20,9 @@ class ChatTile extends StatelessWidget {
       selected: selected,
       selectedTileColor: Colors.white10,
       leading: const Icon(Icons.chat_bubble_outline),
-      title: Text(
-        chat.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        '${chat.messageCount} messages',
-        maxLines: 1,
-      ),
-      trailing: const Icon(
-        Icons.more_horiz,
-        size: 18,
-      ),
+      title: Text(chat.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+      subtitle: Text('${chat.messageCount} messages', maxLines: 1),
+      trailing: const Icon(Icons.more_horiz, size: 18),
       onTap: onTap,
     );
   }

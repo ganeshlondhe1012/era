@@ -12,29 +12,19 @@ enum AppThemeMode {
 }
 
 class AppSettings {
-  const AppSettings({
-    required this.themeMode,
-  });
+  const AppSettings({required this.themeMode});
 
   final AppThemeMode themeMode;
 
-  AppSettings copyWith({
-    AppThemeMode? themeMode,
-  }) {
-    return AppSettings(
-      themeMode: themeMode ?? this.themeMode,
-    );
+  AppSettings copyWith({AppThemeMode? themeMode}) {
+    return AppSettings(themeMode: themeMode ?? this.themeMode);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'themeMode': themeMode.name,
-    };
+    return {'themeMode': themeMode.name};
   }
 
-  factory AppSettings.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory AppSettings.fromJson(Map<String, dynamic> json) {
     final value = json['themeMode'];
 
     final mode = AppThemeMode.values.firstWhere(
@@ -42,12 +32,8 @@ class AppSettings {
       orElse: () => AppThemeMode.system,
     );
 
-    return AppSettings(
-      themeMode: mode,
-    );
+    return AppSettings(themeMode: mode);
   }
 
-  static const defaults = AppSettings(
-    themeMode: AppThemeMode.system,
-  );
+  static const defaults = AppSettings(themeMode: AppThemeMode.system);
 }

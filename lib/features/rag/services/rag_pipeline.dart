@@ -34,26 +34,14 @@ class RagPipeline {
       text: text,
     );
 
-    final embeddings =
-        await _embeddingProvider.embedChunks(
-      chunks,
-    );
+    final embeddings = await _embeddingProvider.embedChunks(chunks);
 
-    _vectorStore.addAll(
-      chunks: chunks,
-      embeddings: embeddings,
-    );
+    _vectorStore.addAll(chunks: chunks, embeddings: embeddings);
   }
 
   /// Retrieve relevant chunks for a user query.
-  Future<List<DocumentChunk>> retrieve(
-    String query, {
-    int limit = 5,
-  }) {
-    return _retrievalService.retrieve(
-      query: query,
-      limit: limit,
-    );
+  Future<List<DocumentChunk>> retrieve(String query, {int limit = 5}) {
+    return _retrievalService.retrieve(query: query, limit: limit);
   }
 
   /// Clears all indexed vectors.
@@ -61,12 +49,9 @@ class RagPipeline {
     _vectorStore.clear();
   }
 
-  int get indexedDocuments =>
-      _documentService.count;
+  int get indexedDocuments => _documentService.count;
 
-  int get indexedChunks =>
-      _vectorStore.chunkCount;
+  int get indexedChunks => _vectorStore.chunkCount;
 
-  bool get hasDocuments =>
-      _documentService.isNotEmpty;
+  bool get hasDocuments => _documentService.isNotEmpty;
 }

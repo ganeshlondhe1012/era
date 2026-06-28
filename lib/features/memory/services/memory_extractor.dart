@@ -15,15 +15,13 @@ class MemoryExtractor {
 
       if (value.isNotEmpty) {
         memories.add(
-         Memory(
-              id: DateTime.now()
-                  .microsecondsSinceEpoch
-                  .toString(),
-              key: 'user_name',
-              value: value,
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-            ),
+          Memory(
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
+            key: 'user_name',
+            value: value,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
         );
       }
     }
@@ -33,10 +31,8 @@ class MemoryExtractor {
 
       if (value.isNotEmpty) {
         memories.add(
-                  Memory(
-            id: DateTime.now()
-                .microsecondsSinceEpoch
-                .toString(),
+          Memory(
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
             key: 'user_name',
             value: value,
             createdAt: DateTime.now(),
@@ -51,10 +47,8 @@ class MemoryExtractor {
 
       if (value.isNotEmpty) {
         memories.add(
-                  Memory(
-            id: DateTime.now()
-                .microsecondsSinceEpoch
-                .toString(),
+          Memory(
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
             key: 'user_name',
             value: value,
             createdAt: DateTime.now(),
@@ -69,15 +63,13 @@ class MemoryExtractor {
 
       if (value.isNotEmpty) {
         memories.add(
-         Memory(
-              id: DateTime.now()
-                  .microsecondsSinceEpoch
-                  .toString(),
-              key: 'user_name',
-              value: value,
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-            ),
+          Memory(
+            id: DateTime.now().microsecondsSinceEpoch.toString(),
+            key: 'user_name',
+            value: value,
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
         );
       }
     }

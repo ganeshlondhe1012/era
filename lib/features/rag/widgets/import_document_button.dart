@@ -14,12 +14,10 @@ class ImportDocumentButton extends StatefulWidget {
   final VoidCallback? onImported;
 
   @override
-  State<ImportDocumentButton> createState() =>
-      _ImportDocumentButtonState();
+  State<ImportDocumentButton> createState() => _ImportDocumentButtonState();
 }
 
-class _ImportDocumentButtonState
-    extends State<ImportDocumentButton> {
+class _ImportDocumentButtonState extends State<ImportDocumentButton> {
   bool _isImporting = false;
 
   Future<void> _import() async {
@@ -32,8 +30,7 @@ class _ImportDocumentButtonState
     });
 
     try {
-      final document =
-          await widget.workflow.importSingle();
+      final document = await widget.workflow.importSingle();
 
       if (!mounted) {
         return;
@@ -43,11 +40,7 @@ class _ImportDocumentButtonState
         widget.onImported?.call();
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${document.name} imported successfully.',
-            ),
-          ),
+          SnackBar(content: Text('${document.name} imported successfully.')),
         );
       }
     } catch (e) {
@@ -55,13 +48,9 @@ class _ImportDocumentButtonState
         return;
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Import failed: $e',
-          ),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Import failed: $e')));
     } finally {
       if (mounted) {
         setState(() {
@@ -74,26 +63,15 @@ class _ImportDocumentButtonState
   @override
   Widget build(BuildContext context) {
     return FilledButton.icon(
-      onPressed: _isImporting
-          ? null
-          : _import,
+      onPressed: _isImporting ? null : _import,
       icon: _isImporting
           ? const SizedBox(
               width: 18,
               height: 18,
-              child:
-                  CircularProgressIndicator(
-                strokeWidth: 2,
-              ),
+              child: CircularProgressIndicator(strokeWidth: 2),
             )
-          : const Icon(
-              Icons.upload_file,
-            ),
-      label: Text(
-        _isImporting
-            ? 'Importing...'
-            : 'Import Document',
-      ),
+          : const Icon(Icons.upload_file),
+      label: Text(_isImporting ? 'Importing...' : 'Import Document'),
     );
   }
 }

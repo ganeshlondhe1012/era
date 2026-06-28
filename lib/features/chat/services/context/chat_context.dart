@@ -28,6 +28,5 @@ class ChatContext {
   bool get hasDocuments => documents.isNotEmpty;
 
   bool get hasSystemPrompt =>
-      systemPrompt != null &&
-      systemPrompt!.trim().isNotEmpty;
+      systemPrompt != null && systemPrompt!.trim().isNotEmpty;
 }

@@ -11,15 +11,10 @@ class VectorStore {
     _chunks.clear();
   }
 
-  void add(
-    DocumentChunk chunk,
-    DocumentEmbedding embedding,
-  ) {
+  void add(DocumentChunk chunk, DocumentEmbedding embedding) {
     _chunks[chunk.id] = chunk;
 
-    _embeddings.removeWhere(
-      (e) => e.chunkId == embedding.chunkId,
-    );
+    _embeddings.removeWhere((e) => e.chunkId == embedding.chunkId);
 
     _embeddings.add(embedding);
   }
@@ -34,10 +29,7 @@ class VectorStore {
     );
 
     for (var i = 0; i < chunks.length; i++) {
-      add(
-        chunks[i],
-        embeddings[i],
-      );
+      add(chunks[i], embeddings[i]);
     }
   }
 
@@ -45,8 +37,7 @@ class VectorStore {
     required List<double> queryVector,
     int limit = 5,
   }) {
-    final scores =
-        <({double score, DocumentChunk chunk})>[];
+    final scores = <({double score, DocumentChunk chunk})>[];
 
     for (final embedding in _embeddings) {
       final chunk = _chunks[embedding.chunkId];
@@ -56,28 +47,17 @@ class VectorStore {
       }
 
       scores.add((
-        score: _cosineSimilarity(
-          queryVector,
-          embedding.vector,
-        ),
+        score: _cosineSimilarity(queryVector, embedding.vector),
         chunk: chunk,
       ));
     }
 
-    scores.sort(
-      (a, b) => b.score.compareTo(a.score),
-    );
+    scores.sort((a, b) => b.score.compareTo(a.score));
 
-    return scores
-        .take(limit)
-        .map((e) => e.chunk)
-        .toList();
+    return scores.take(limit).map((e) => e.chunk).toList();
   }
 
-  double _cosineSimilarity(
-    List<double> a,
-    List<double> b,
-  ) {
+  double _cosineSimilarity(List<double> a, List<double> b) {
     if (a.length != b.length) {
       return -1;
     }
@@ -96,18 +76,14 @@ class VectorStore {
       return -1;
     }
 
-   return dot /
-    (math.sqrt(normA) * math.sqrt(normB));
+    return dot / (math.sqrt(normA) * math.sqrt(normB));
   }
 
-  int get embeddingCount =>
-      _embeddings.length;
+  int get embeddingCount => _embeddings.length;
 
-  int get chunkCount =>
-      _chunks.length;
+  int get chunkCount => _chunks.length;
 
-  bool get isEmpty =>
-      _embeddings.isEmpty;
+  bool get isEmpty => _embeddings.isEmpty;
 }
 
 extension on double {
@@ -121,21 +97,17 @@ class Math {
     return value <= 0
         ? 0
         : value == 1
-            ? 1
-            : _sqrtNewton(value);
+        ? 1
+        : _sqrtNewton(value);
   }
 
-  static double _sqrtNewton(
-    double value,
-  ) {
+  static double _sqrtNewton(double value) {
     double x = value;
 
     while (true) {
-      final next =
-          0.5 * (x + value / x);
+      final next = 0.5 * (x + value / x);
 
-      if ((x - next).abs() <
-          0.000001) {
+      if ((x - next).abs() < 0.000001) {
         return next;
       }
 

@@ -53,17 +53,13 @@ class DocumentImportWorkflow {
     return imported;
   }
 
-  Future<Document> _createDocument(
-    String path,
-  ) async {
+  Future<Document> _createDocument(String path) async {
     final file = File(path);
 
     final stat = await file.stat();
 
     final document = Document(
-      id: DateTime.now()
-          .microsecondsSinceEpoch
-          .toString(),
+      id: DateTime.now().microsecondsSinceEpoch.toString(),
       name: file.uri.pathSegments.last,
       path: path,
       size: stat.size,

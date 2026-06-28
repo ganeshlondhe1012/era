@@ -5,9 +5,7 @@ import '../../../features/chat/services/ollama_service.dart';
 import 'ai_provider.dart';
 
 class OllamaProvider implements AIProvider {
-  OllamaProvider({
-    required this._service,
-  });
+  OllamaProvider({required this._service});
 
   final OllamaService _service;
 
@@ -31,10 +29,7 @@ class OllamaProvider implements AIProvider {
   }) async {
     final stopwatch = Stopwatch()..start();
 
-    final text = await _service.generateResponse(
-      prompt: prompt,
-      model: model,
-    );
+    final text = await _service.generateResponse(prompt: prompt, model: model);
 
     stopwatch.stop();
 
@@ -57,16 +52,10 @@ class OllamaProvider implements AIProvider {
       prompt: prompt,
       model: model,
     )) {
-            yield AIResponseChunk(
-          text: chunk,
-          isDone: false,
-        );
+      yield AIResponseChunk(text: chunk, isDone: false);
     }
 
-    yield const AIResponseChunk(
-      text: '',
-      isDone: true,
-    );
+    yield const AIResponseChunk(text: '', isDone: true);
   }
 
   @override

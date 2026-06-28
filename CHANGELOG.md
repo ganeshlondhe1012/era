@@ -4,24 +4,27 @@
 
 ### Added
 
-- Local Ollama integration
-- Streaming chat responses
-- Chat history
-- Memory system
-- Document upload
-- Local RAG foundation
+- Offline AI chat powered by Ollama
+- Streaming AI responses
+- Local chat history
+- Conversation management
 - Markdown rendering
-- Modern desktop interface
+- Memory foundation
+- Document attachment support
+- Initial RAG architecture
+- AI provider abstraction
+- Modular project architecture
 
 ### Improved
 
-- Chat architecture
-- AI provider abstraction
-- Project structure
+- Cleaner project structure
+- Refactored chat pipeline
+- Better separation of business logic and UI
+- Improved desktop user interface
 
-### Planned
+### Known Limitations
 
-- Better prompt builder
-- Semantic memory retrieval
-- Tool calling
-- Multiple AI providers
+- Prompt engineering is still basic.
+- Memory retrieval is rule-based.
+- RAG pipeline is under active development.
+- Some planned features are placeholders for future versions.
