@@ -56,16 +56,17 @@ class Chat {
     Map<String, dynamic> map,
   ) {
     return Chat(
-      id: map['id'] as String,
-      title: map['title'] as String,
-      createdAt: DateTime.parse(
-        map['createdAt'] as String,
-      ),
-      messages: (map['messages'] as List<dynamic>)
-          .cast<Map<String, dynamic>>()
-          .map(Message.fromMap)
-          .toList(),
-    );
+            id: map['id'] as String,
+            title: map['title'] as String,
+            createdAt: DateTime.parse(
+              map['createdAt'] as String,
+            ),
+            messages: (map['messages'] as List<dynamic>)
+                .cast<Map<String, dynamic>>()
+                .map(Message.fromMap)
+                .toList(),
+            isPinned: map['isPinned'] as bool? ?? false,
+          );
   }
 
   @override

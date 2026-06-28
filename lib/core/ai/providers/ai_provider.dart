@@ -1,30 +1,27 @@
 import '../../../features/chat/models/ai_response.dart';
 import '../../../features/chat/models/ai_response_chunk.dart';
 
-/// Base abstraction for every AI backend.
+/// Base interface for every AI provider supported by Era.
 ///
-/// Current:
-/// - Ollama
+/// Each provider is responsible for:
+/// - Checking availability
+/// - Listing installed models
+/// - Generating responses
+/// - Streaming responses
 ///
-/// Future:
-/// - LM Studio
-/// - llama.cpp
-/// - OpenAI
-/// - Gemini
-/// - Claude
+/// Examples include Ollama today, with other local or cloud
+/// providers added later.
 abstract class AIProvider {
-  /// Display name.
+  /// Human-readable provider name.
   String get providerName;
 
-  /// Returns true if the provider is available.
+  /// Returns whether the provider is currently available.
   Future<bool> isAvailable();
 
-  /// Returns every installed model.
+  /// Returns every model exposed by this provider.
   Future<List<String>> getInstalledModels();
 
   /// Generates a complete response.
-  ///
-  /// This API is kept for backward compatibility.
   Future<AIResponse> generateResponse({
     required String prompt,
     required String model,
@@ -32,9 +29,8 @@ abstract class AIProvider {
 
   /// Streams a response incrementally.
   ///
-  /// Default implementation falls back to the non-streaming API
-  /// so providers continue to work until they implement native
-  /// streaming support.
+  /// Providers that don't support native streaming automatically
+  /// fall back to the non-streaming implementation.
   Stream<AIResponseChunk> generateResponseStream({
     required String prompt,
     required String model,
@@ -50,6 +46,12 @@ abstract class AIProvider {
     );
   }
 
-  /// Releases resources.
+  /// Releases any resources owned by the provider.
+  ///
+  /// Most providers don't need cleanup, so the default
+  /// implementation does nothing.
   Future<void> dispose() async {}
+
+  // TODO: Expose provider capabilities (vision, embeddings, tools, etc.)
+  // so the UI can automatically enable supported features.
 }

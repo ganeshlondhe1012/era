@@ -1,4 +1,4 @@
-import '../../../core/ai/providers/ai_provider.dart';
+   import '../../../core/ai/providers/ai_provider.dart';
 
 import '../../memory/repository/local_repository.dart';
 import '../../memory/services/memory_extractor.dart';

@@ -17,16 +17,24 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final isUser = message.isUser;
 
-    final bubbleColor = isUser
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.surfaceContainerHighest;
+   final theme = Theme.of(context);
+
+final bubbleColor = isUser
+    ? const Color(0xFF2563EB) 
+    : theme.colorScheme.surfaceContainerHighest;
     
    
     return Padding(
-      padding: const EdgeInsets.symmetric(
+     /* padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 6,
-      ),
+      ),*/
+      padding: EdgeInsets.only(
+            left: isUser ? 64 : 16,
+            right: isUser ? 16 : 64,
+            top: 6,
+            bottom: 6,
+          ),
       child: Row(
         mainAxisAlignment:
             isUser
@@ -52,17 +60,17 @@ class MessageBubble extends StatelessWidget {
 
                       
                         Material(
-                elevation: 1,
+                elevation: 0.5,
                 borderRadius:
                     BorderRadius.circular(20),
                 color: bubbleColor,
                 child: Container(
               constraints: const BoxConstraints(
-                maxWidth: 680,
+                maxWidth: 620,
               ),
               padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 16,
+                    horizontal: 18,
+                    vertical: 12,
                   ),
               decoration: BoxDecoration(
                 color: bubbleColor,
@@ -72,9 +80,8 @@ class MessageBubble extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                MessageContent(
-                       text: message.text,
-                    
-                          
+                       text: message.text
+
                     ),
                   const SizedBox(height: 8),
 
@@ -82,12 +89,12 @@ class MessageBubble extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     child: Text(
                       _formatTime(message.createdAt),
-                      style: TextStyle(
-                               color: Theme.of(context)
-                              .colorScheme
-                              .onSurfaceVariant,
-
-                       ),
+                     style: TextStyle(
+                            fontSize: 12,
+                            color: isUser
+                                ? Colors.white70
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                       ),
                     ),
                   
@@ -107,7 +114,7 @@ class MessageBubble extends StatelessWidget {
           ),
 
           if (isUser) ...[
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
                           CircleAvatar(
                   radius: 20,
                   backgroundColor:
