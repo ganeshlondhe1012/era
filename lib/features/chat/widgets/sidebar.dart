@@ -157,7 +157,9 @@ class Sidebar extends StatelessWidget {
                               }
                               break;
 
-                            case ChatMenuAction.pin:
+                           case ChatMenuAction.pin:
+                                await controller.togglePin(chat.id);
+                                break;
                             case ChatMenuAction.duplicate:
                            case ChatMenuAction.export:
                                 try {

@@ -176,18 +176,27 @@ final _extractor = const DocumentTextExtractor();
              
                   const SizedBox(width: 8),
 
-                  SizedBox(
-                    width: 42,
-                    height: 52,
-                    child: FilledButton(
-                      onPressed: hasText ? _sendMessage : null,
-                      style: FilledButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: EdgeInsets.zero,
+                                      SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: isGenerating
+                              ? controller.stopGeneration
+                              : (hasText ? _sendMessage : null),
+                          style: FilledButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: EdgeInsets.zero,
+                            backgroundColor: isGenerating
+                                ? Colors.red
+                                : null,
+                          ),
+                          child: Icon(
+                            isGenerating
+                                ? Icons.stop_rounded
+                                : Icons.send_rounded,
+                          ),
+                        ),
                       ),
-                      child: const Icon(Icons.send_rounded),
-                    ),
-                  ),
                 ],
               ),
             ],

@@ -20,30 +20,72 @@ class ChatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      selected: selected,
-      selectedTileColor: Colors.white10,
+   return ListTile(
+          selected: selected,
+          selectedTileColor:
+              Theme.of(context).colorScheme.primaryContainer,
 
-      leading: const Icon(
-        Icons.chat_bubble_outline,
-      ),
+          tileColor: chat.isPinned
+              ? Theme.of(context)
+                  .colorScheme
+                  .primaryContainer
+                  .withOpacity(0.15)
+              : null,
 
-      title: Text(
-        chat.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
 
-      subtitle: Text(
-        '${chat.messageCount} messages',
-        maxLines: 1,
-      ),
+          leading: Icon(
+            chat.isPinned
+                ? Icons.push_pin
+                : Icons.chat_bubble_outline,
+            color: chat.isPinned
+                ? Theme.of(context).colorScheme.primary
+                : null,
+          ),
 
-      trailing: ChatTileMenu(
-        onSelected: onMenuSelected,
-      ),
+          title: Row(
+            children: [
+              if (chat.isPinned)
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: Transform.rotate(
+                    angle: -0.6,
+                    child: Icon(
+                      Icons.push_pin,
+                      size: 15,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary,
+                    ),
+                  ),
+                ),
 
-      onTap: onTap,
-    );
+              Expanded(
+                child: Text(
+                  chat.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: chat.isPinned
+                        ? FontWeight.w600
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          subtitle: Text(
+            '${chat.messageCount} messages',
+            maxLines: 1,
+          ),
+
+          trailing: ChatTileMenu(
+            onSelected: onMenuSelected,
+          ),
+
+          onTap: onTap,
+        );
   }
 }

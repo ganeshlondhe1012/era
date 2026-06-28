@@ -8,12 +8,14 @@ class Chat {
   final String title;
   final DateTime createdAt;
   final List<Message> messages;
+  final bool isPinned;
 
   const Chat({
     required this.id,
     required this.title,
     required this.createdAt,
     required this.messages,
+     this.isPinned = false,
   });
 
   Chat copyWith({
@@ -21,12 +23,14 @@ class Chat {
     String? title,
     DateTime? createdAt,
     List<Message>? messages,
+    bool? isPinned,
   }) {
     return Chat(
       id: id ?? this.id,
       title: title ?? this.title,
       createdAt: createdAt ?? this.createdAt,
       messages: messages ?? this.messages,
+      isPinned: isPinned ?? this.isPinned,
     );
   }
 
@@ -43,6 +47,7 @@ class Chat {
       'messages': messages
           .map((message) => message.toMap())
           .toList(),
+      'isPinned': isPinned,
     };
   }
 

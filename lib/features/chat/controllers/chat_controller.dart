@@ -135,6 +135,7 @@ Future<void> initialize() async {
       _chats
         ..clear()
         ..addAll(savedChats);
+        _sortChats();
 
       if (_currentChatIndex >= _chats.length) {
         _currentChatIndex = 0;
@@ -167,6 +168,10 @@ Future<void> initialize() async {
   }
 
  Future<void> createNewChat() async {
+   if (currentChat.messages.isEmpty &&
+    currentChat.title == 'New Chat') {
+  return;
+}
     _chats.add(
       Chat(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -179,7 +184,8 @@ Future<void> initialize() async {
    _currentChatIndex = _chats.length - 1;
 
     await _saveChats();
-
+    
+    _sortChats();
     notifyListeners();
   }
 
@@ -299,17 +305,82 @@ void selectModel(String model) {
       }
   }
 
- Future<void> clearCurrentChat() async {
-    _replaceCurrentChat(
-      currentChat.copyWith(
-        messages: const [],
+  // duplicate chat
+  Future<void> duplicateChat(String chatId) async {
+  final index = _chats.indexWhere(
+    (chat) => chat.id == chatId,
+  );
+
+  if (index == -1) return;
+
+  final original = _chats[index];
+
+  final duplicate = original.copyWith(
+    id: DateTime.now()
+        .microsecondsSinceEpoch
+        .toString(),
+    title: '${original.title} (Copy)',
+    createdAt: DateTime.now(),
+    messages: List<Message>.from(
+      original.messages.map(
+        (message) => message.copyWith(),
       ),
-    );
+    ),
+  );
 
-   await _saveChats();
+  _chats.insert(index + 1, duplicate);
 
-     notifyListeners();
-  }
+  _currentChatIndex = index + 1;
+
+  _sortChats();
+
+  await _saveChats();
+
+  notifyListeners();
+}
+  //togglepin chat
+  Future<void> togglePin(String chatId) async {
+  final index = _chats.indexWhere(
+    (chat) => chat.id == chatId,
+  );
+
+  if (index == -1) return;
+
+  final chat = _chats[index];
+
+  _chats[index] = chat.copyWith(
+    isPinned: !chat.isPinned,
+  );
+
+  _sortChats();
+
+  await _saveChats();
+
+  notifyListeners();
+}
+
+ void _sortChats() {
+  _chats.sort((a, b) {
+    if (a.isPinned != b.isPinned) {
+      return a.isPinned ? -1 : 1;
+    }
+
+    return b.createdAt.compareTo(a.createdAt);
+  });
+}
+ Future<void> clearCurrentChat() async {
+      _generationController.reset();
+
+      _replaceCurrentChat(
+        currentChat.copyWith(
+          messages: const [],
+        ),
+      );
+
+      await _saveChats();
+
+      notifyListeners();
+}
 
   //stop generation if it's in progress
   void stopGeneration() {
@@ -418,22 +489,38 @@ void selectModel(String model) {
   return 'Calculating...';
 }
 
-  Future<void> deleteCurrentChat() async {
-  if (_chats.length == 1) {
-    await clearCurrentChat();
-    return;
-  }
+ Future<void> deleteCurrentChat() async {
+        // Last remaining chat -> reset instead of deleting
+        if (_chats.length == 1) {
+          _chats[0] = Chat(
+            id: DateTime.now()
+                .millisecondsSinceEpoch
+                .toString(),
+            title: 'New Chat',
+            createdAt: DateTime.now(),
+            messages: const [],
+          );
 
-  _chats.removeAt(_currentChatIndex);
+          _currentChatIndex = 0;
 
-  if (_currentChatIndex >= _chats.length) {
-    _currentChatIndex = _chats.length - 1;
-  }
+          await _saveChats();
 
-  await _saveChats();
+          notifyListeners();
+          return;
+        }
 
-  notifyListeners();
-}
+        _chats.removeAt(_currentChatIndex);
+
+        if (_currentChatIndex >= _chats.length) {
+          _currentChatIndex = _chats.length - 1;
+        }
+
+        _sortChats();
+
+        await _saveChats();
+
+        notifyListeners();
+      }
 
   void _appendMessage(Message message) {
     final updatedMessages = List<Message>.from(currentChat.messages)

@@ -23,13 +23,13 @@ class ChatTileMenu extends StatelessWidget {
             title: Text('Rename'),
           ),
         ),
-        PopupMenuItem(
-          value: ChatMenuAction.pin,
-          child: ListTile(
-            leading: Icon(Icons.push_pin_outlined),
-            title: Text('Pin'),
-          ),
-        ),
+                    const PopupMenuItem(
+                  value: ChatMenuAction.pin,
+                  child: ListTile(
+                    leading: Icon(Icons.push_pin_outlined),
+                    title: Text('Pin'),
+                  ),
+                ),
         PopupMenuItem(
           value: ChatMenuAction.duplicate,
           child: ListTile(
