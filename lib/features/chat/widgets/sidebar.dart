@@ -119,6 +119,10 @@ class Sidebar extends StatelessWidget {
                                 );
                               }
                               break;
+                            
+                            case ChatMenuAction.duplicate:
+                                await controller.duplicateChat(chat.id);
+                                break;
 
                             case ChatMenuAction.delete:
                               final confirmed =
