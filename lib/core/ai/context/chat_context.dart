@@ -1,27 +1,25 @@
+import 'context_store.dart';
+import 'context_key.dart';
 class ChatContext {
   const ChatContext({
-    this.values = const {},
+    this.store = const ContextStore(),
   });
+  
+ final ContextStore store;
 
-  final Map<String, Object?> values;
-
-  T? get<T>(String key) {
-    final value = values[key];
-    if (value is T) {
-      return value;
-    }
-    return null;
+  T? read<T>(ContextKey<T> key) {
+    return store.read(key);
   }
 
-  ChatContext copyWithValue(
-    String key,
-    Object? value,
+  ChatContext write<T>(
+    ContextKey<T> key,
+    T value,
   ) {
     return ChatContext(
-      values: {
-        ...values,
-        key: value,
-      },
+      store: store.write(
+        key,
+        value,
+      ),
     );
   }
 }
