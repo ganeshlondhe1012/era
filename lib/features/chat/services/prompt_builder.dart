@@ -1,39 +1,35 @@
-import '../../memory/models/memory.dart';
+import 'context/chat_context.dart';
 
 class PromptBuilder {
   const PromptBuilder();
 
-  String build({
-    required String userPrompt,
-    List<Memory> memories = const [],
-    String? systemPrompt,
-  }) {
+  String build(
+    ChatContext context,
+  ) {
     final buffer = StringBuffer();
 
-    if (systemPrompt != null &&
-        systemPrompt.trim().isNotEmpty) {
-      buffer.writeln(systemPrompt);
+    // Future system prompt
+    if (context.hasSystemPrompt) {
+      buffer.writeln(context.systemPrompt);
       buffer.writeln();
     }
 
-    if (memories.isNotEmpty) {
-      buffer.writeln(
-        'Relevant user memory:',
-      );
-
-      buffer.writeln();
-
-      for (final memory in memories) {
-        buffer.writeln(
-          '- ${memory.key}: ${memory.value}',
-        );
-      }
-
-      buffer.writeln();
+    // Future conversation history
+    if (context.hasHistory) {
+      // keep existing history formatting here
     }
 
-    buffer.writeln('User:');
-    buffer.writeln(userPrompt);
+    // Future memory
+    if (context.hasMemories) {
+      // keep existing memory formatting here
+    }
+
+    // Future documents
+    if (context.hasDocuments) {
+      // placeholder
+    }
+
+    buffer.write(context.userPrompt);
 
     return buffer.toString().trim();
   }

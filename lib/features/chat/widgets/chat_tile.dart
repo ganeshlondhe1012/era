@@ -29,7 +29,7 @@ class ChatTile extends StatelessWidget {
               ? Theme.of(context)
                   .colorScheme
                   .primaryContainer
-                  .withOpacity(0.15)
+                  .withValues(alpha: 0.15)
               : null,
 
           shape: RoundedRectangleBorder(

@@ -23,7 +23,7 @@ class ChatTileMenu extends StatelessWidget {
             title: Text('Rename'),
           ),
         ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                   value: ChatMenuAction.pin,
                   child: ListTile(
                     leading: Icon(Icons.push_pin_outlined),

@@ -221,8 +221,7 @@ void selectModel(String model) {
 
     final prompt = text.trim();
 
-    final finalPrompt =
-    await _chatPipeline.buildPrompt(
+    final finalPrompt = _chatPipeline.buildPrompt(
       userPrompt: prompt,
       history: currentChat.messages,
     );

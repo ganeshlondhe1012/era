@@ -179,7 +179,7 @@ Widget build(BuildContext context) {
                     12,
                     12,
                   ),
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: 4),
                   itemCount:
                       controller.filteredChats.length,

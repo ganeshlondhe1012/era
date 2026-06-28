@@ -4,12 +4,10 @@ import 'package:provider/provider.dart';
 import '../controllers/settings_controller.dart';
 import '../models/app_settings.dart';
 import '../models/settings_category.dart';
-import 'package:provider/provider.dart';
 
 import '../../chat/controllers/chat_controller.dart';
 
 import '../../ai/widgets/ai_settings_panel.dart';
-import '../../chat/controllers/chat_controller.dart';
 class SettingsContent extends StatelessWidget {
   const SettingsContent({
     super.key,
