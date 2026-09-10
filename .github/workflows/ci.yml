@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-rag:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python_rag
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+      - name: Compile Python service
+        run: python -m compileall -q app
+      - name: Run Python tests
+        run: python -m pytest app/test_rag_unit.py -q
+
+  flutter:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.1'
+          channel: stable
+          cache: true
+      - name: Verify Flutter project
+        run: flutter doctor -v
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Analyze Dart code
+        run: flutter analyze
+      - name: Run Flutter tests
+        run: flutter test
+      - name: Build Windows application
+        run: flutter build windows --release
